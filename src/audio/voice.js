@@ -20,7 +20,9 @@ export function scoreVoice(v) {
   return s;
 }
 
-export function pickVoice(voices) {
+export function pickVoice(voices, preferred) {
+  const chosen = preferred && (voices || []).find((v) => v.name === preferred && scoreVoice(v) !== -Infinity);
+  if (chosen) return chosen; // a grown-up picked this voice in the Grown-ups area
   let best = null;
   let bestScore = -Infinity;
   for (const v of voices || []) {
@@ -32,3 +34,6 @@ export function pickVoice(voices) {
 
 // A little slower and warmer than the default, never loud.
 export const VOICE = { rate: 0.8, pitch: 1.12, volume: 0.9 };
+
+// English voices on this device, softest first (used by the voice picker).
+export const englishVoices = (voices) => (voices || []).filter((v) => scoreVoice(v) !== -Infinity).sort((a, b) => scoreVoice(b) - scoreVoice(a));

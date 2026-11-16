@@ -48,6 +48,11 @@
     back: s("Back", "Quay l\u1EA1i", "\uB4A4\uB85C"),
     close: s("Close", "\u0110\xF3ng", "\uB2EB\uAE30"),
     musicOff: s("Turn music off", "T\u1EAFt nh\u1EA1c", "\uC74C\uC545 \uB044\uAE30"),
+    voiceTitle: s("Reading voice", "Gi\u1ECDng \u0111\u1ECDc", "\uC77D\uC5B4 \uC8FC\uB294 \uBAA9\uC18C\uB9AC"),
+    voiceAuto: s("Automatic (softest available)", "T\u1EF1 \u0111\u1ED9ng (gi\u1ECDng nh\u1EB9 nh\xE0ng nh\u1EA5t)", "\uC790\uB3D9 (\uAC00\uC7A5 \uBD80\uB4DC\uB7EC\uC6B4 \uBAA9\uC18C\uB9AC)"),
+    voiceTest: s("Hear this voice", "Nghe th\u1EED gi\u1ECDng n\xE0y", "\uC774 \uBAA9\uC18C\uB9AC \uB4E4\uC5B4\uBCF4\uAE30"),
+    voiceHelp: s("Voices come from this device. Choose the one that sounds softest and friendliest.", "C\xE1c gi\u1ECDng \u0111\u1ECDc c\xF3 s\u1EB5n tr\xEAn thi\u1EBFt b\u1ECB n\xE0y. H\xE3y ch\u1ECDn gi\u1ECDng nghe nh\u1EB9 nh\xE0ng v\xE0 th\xE2n thi\u1EC7n nh\u1EA5t.", "\uBAA9\uC18C\uB9AC\uB294 \uC774 \uAE30\uAE30\uC5D0 \uC788\uB294 \uAC83\uC744 \uC0AC\uC6A9\uD574\uC694. \uAC00\uC7A5 \uBD80\uB4DC\uB7FD\uACE0 \uB2E4\uC815\uD558\uAC8C \uB4E4\uB9AC\uB294 \uAC83\uC744 \uACE8\uB77C \uC8FC\uC138\uC694."),
+    voiceNone: s("This device has no English voice to choose from. Listen buttons stay hidden.", "Thi\u1EBFt b\u1ECB n\xE0y kh\xF4ng c\xF3 gi\u1ECDng ti\u1EBFng Anh \u0111\u1EC3 ch\u1ECDn. C\xE1c n\xFAt Nghe s\u1EBD \u0111\u01B0\u1EE3c \u1EA9n.", "\uC774 \uAE30\uAE30\uC5D0\uB294 \uACE0\uB97C \uC218 \uC788\uB294 \uC601\uC5B4 \uBAA9\uC18C\uB9AC\uAC00 \uC5C6\uC5B4\uC694. \uB4E3\uAE30 \uBC84\uD2BC\uC740 \uC228\uACA8\uC838\uC694."),
     musicOn: s("Turn music on", "B\u1EADt nh\u1EA1c", "\uC74C\uC545 \uCF1C\uAE30"),
     cancel: s("Cancel", "H\u1EE7y", "\uCDE8\uC18C"),
     done: s("Done", "Xong", "\uC644\uB8CC"),
@@ -964,8 +969,26 @@
     ];
   }
 
-  // src/audio/music.js
+  // src/audio/prefs.js
   var KEY2 = "little-city-makers.audio";
+  function readPrefs() {
+    try {
+      const v2 = JSON.parse(localStorage.getItem(KEY2) || "{}");
+      return { music: v2.music !== false, voice: typeof v2.voice === "string" ? v2.voice : null };
+    } catch {
+      return { music: true, voice: null };
+    }
+  }
+  function writePrefs(patch) {
+    try {
+      localStorage.setItem(KEY2, JSON.stringify({ ...readPrefs(), ...patch }));
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  // src/audio/music.js
   var LEVEL = 0.07;
   var DUCKED = 0.35;
   var BPM = 76;
@@ -983,7 +1006,9 @@
   var hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
   var AC = typeof window !== "undefined" ? window.AudioContext || window.webkitAudioContext : null;
   var musicSupported = !!AC;
+  var readPref = () => readPrefs().music;
   var enabled = readPref();
+  var writePref = () => writePrefs({ music: enabled });
   var ctx = null;
   var master = null;
   var timer = null;
@@ -992,20 +1017,6 @@
   var lastMel = 2;
   var ducked = false;
   var listeners = /* @__PURE__ */ new Set();
-  function readPref() {
-    try {
-      const v2 = JSON.parse(localStorage.getItem(KEY2) || "{}");
-      return v2.music !== false;
-    } catch {
-      return true;
-    }
-  }
-  function writePref() {
-    try {
-      localStorage.setItem(KEY2, JSON.stringify({ music: enabled }));
-    } catch {
-    }
-  }
   var emit = () => listeners.forEach((f) => f(enabled));
   var musicEnabled = () => enabled;
   function subscribeMusic(f) {
@@ -1108,9 +1119,22 @@
       nextBarTime = Math.max(nextBarTime, ctx.currentTime + 0.2);
       ramp(3);
     };
-    if (ctx.state === "suspended") ctx.resume().then(go).catch(() => {
+    if (ctx.state !== "running") ctx.resume().then(go).catch(() => {
     });
     else go();
+  }
+  function armMusic() {
+    const events = ["pointerup", "click", "touchend", "keydown"];
+    const stop = () => events.forEach((e) => window.removeEventListener(e, handler, true));
+    function handler() {
+      if (ctx && ctx.state === "running") {
+        stop();
+        return;
+      }
+      unlockMusic();
+    }
+    events.forEach((e) => window.addEventListener(e, handler, true));
+    return stop;
   }
   function setMusic(on) {
     enabled = !!on;
@@ -1141,7 +1165,9 @@
     if (v2.localService === false) s4 += 0.5;
     return s4;
   }
-  function pickVoice(voices) {
+  function pickVoice(voices, preferred) {
+    const chosen = preferred && (voices || []).find((v2) => v2.name === preferred && scoreVoice(v2) !== -Infinity);
+    if (chosen) return chosen;
     let best = null;
     let bestScore = -Infinity;
     for (const v2 of voices || []) {
@@ -1154,6 +1180,7 @@
     return bestScore === -Infinity ? null : best;
   }
   var VOICE = { rate: 0.8, pitch: 1.12, volume: 0.9 };
+  var englishVoices = (voices) => (voices || []).filter((v2) => scoreVoice(v2) !== -Infinity).sort((a, b) => scoreVoice(b) - scoreVoice(a));
 
   // src/components/ui.jsx
   var PATHS = {
@@ -1185,7 +1212,7 @@
   var voice = null;
   var choose = () => {
     try {
-      voice = pickVoice(window.speechSynthesis.getVoices());
+      voice = pickVoice(window.speechSynthesis.getVoices(), readPrefs().voice);
     } catch {
       voice = null;
     }
@@ -1200,6 +1227,7 @@
   function speak(text) {
     if (!canSpeak || !text) return;
     try {
+      if (!voice) choose();
       const clean = String(text).replace(/[^\p{L}\p{N}\p{P}\s]/gu, "").replace(/_+/g, " ");
       const u = new SpeechSynthesisUtterance(clean);
       u.lang = "en-US";
@@ -1217,6 +1245,24 @@
       window.speechSynthesis.speak(u);
     } catch {
     }
+  }
+  function VoicePicker({ t }) {
+    const [list, setList] = useState(() => canSpeak ? englishVoices(window.speechSynthesis.getVoices()) : []);
+    const [name, setName] = useState(() => readPrefs().voice || "");
+    useEffect(() => {
+      if (!canSpeak) return void 0;
+      const sync = () => setList(englishVoices(window.speechSynthesis.getVoices()));
+      sync();
+      window.speechSynthesis.addEventListener("voiceschanged", sync);
+      return () => window.speechSynthesis.removeEventListener("voiceschanged", sync);
+    }, []);
+    if (!canSpeak || list.length === 0) return /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("voiceNone"));
+    const pick = (v2) => {
+      setName(v2);
+      writePrefs({ voice: v2 || null });
+      choose();
+    };
+    return /* @__PURE__ */ react_default.createElement("div", { className: "voicepick" }, /* @__PURE__ */ react_default.createElement("label", { htmlFor: "voice-select", className: "sr" }, t("voiceTitle")), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("select", { id: "voice-select", value: name, onChange: (e) => pick(e.target.value) }, /* @__PURE__ */ react_default.createElement("option", { value: "" }, t("voiceAuto")), list.map((v2) => /* @__PURE__ */ react_default.createElement("option", { key: v2.name, value: v2.name }, v2.name, " (", v2.lang, ")"))), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: () => speak("Hello! Let's build a city together.") }, /* @__PURE__ */ react_default.createElement(Icon, { name: "speaker", size: 18 }), t("voiceTest"))), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("voiceHelp")));
   }
   function MusicToggle({ t }) {
     const [on, setOn] = useState(musicEnabled());
@@ -2023,7 +2069,7 @@
     const done = MISSIONS.filter((m) => state.missions[m.id]);
     const words = [...new Map(done.flatMap((m) => m.vocab).map((w) => [w.w, w])).values()];
     const n = placedCount(state);
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen paper" }, /* @__PURE__ */ react_default.createElement(TopBar, { title: t("parentTitle"), onBack: () => go("city"), backLabel: t("city") }), /* @__PURE__ */ react_default.createElement("main", { className: "page" }, /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("overview"), player ? ` \xB7 ${player.nick}` : ""), /* @__PURE__ */ react_default.createElement("div", { className: "stats" }, /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, done.length, "/", MISSIONS.length), /* @__PURE__ */ react_default.createElement("span", null, t("missionsDone"))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, n, "/", TOTAL_BUILDINGS), /* @__PURE__ */ react_default.createElement("span", null, t("cityGrowth"), ": ", t("lv" + levelOf(n)))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, words.length), /* @__PURE__ */ react_default.createElement("span", null, t("words")))), /* @__PURE__ */ react_default.createElement("h3", null, t("modeLabel")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: state.mode === m ? "segbtn on" : "segbtn", "aria-pressed": state.mode === m, onClick: () => dispatch({ type: "MODE", mode: m }) }, t(m), " \xB7 ", t(m + "Age")))), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("modeNote"))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("engSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: ENGLISH, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("lifeSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: LIFE, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("missionsDone")), done.length === 0 ? /* @__PURE__ */ react_default.createElement("p", { className: "empty" }, t("noneYet")) : /* @__PURE__ */ react_default.createElement("ul", { className: "donelist" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, /* @__PURE__ */ react_default.createElement(Icon, { name: "check", size: 18 }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, loc(m.title, lang)), /* @__PURE__ */ react_default.createElement("small", null, loc(m.objective, lang)))))), done.length > 0 && /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("h3", null, t("sentences")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist", lang: "en" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, m.target))), /* @__PURE__ */ react_default.createElement("h3", null, t("words")), /* @__PURE__ */ react_default.createElement("p", { className: "wordcloud", lang: "en" }, words.map((w) => /* @__PURE__ */ react_default.createElement("span", { key: w.w }, w.w))))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("aboutData")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist" }, /* @__PURE__ */ react_default.createElement("li", null, saved ? t("savedOk") : t("savedNo")), /* @__PURE__ */ react_default.createElement("li", null, t("noPersonal")), /* @__PURE__ */ react_default.createElement("li", null, t("contentNote"))), ask ? /* @__PURE__ */ react_default.createElement("div", { className: "confirm", role: "alertdialog", "aria-label": t("reset") }, /* @__PURE__ */ react_default.createElement("p", null, t("resetAsk")), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen paper" }, /* @__PURE__ */ react_default.createElement(TopBar, { title: t("parentTitle"), onBack: () => go("city"), backLabel: t("city") }), /* @__PURE__ */ react_default.createElement("main", { className: "page" }, /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("overview"), player ? ` \xB7 ${player.nick}` : ""), /* @__PURE__ */ react_default.createElement("div", { className: "stats" }, /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, done.length, "/", MISSIONS.length), /* @__PURE__ */ react_default.createElement("span", null, t("missionsDone"))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, n, "/", TOTAL_BUILDINGS), /* @__PURE__ */ react_default.createElement("span", null, t("cityGrowth"), ": ", t("lv" + levelOf(n)))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, words.length), /* @__PURE__ */ react_default.createElement("span", null, t("words")))), /* @__PURE__ */ react_default.createElement("h3", null, t("modeLabel")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: state.mode === m ? "segbtn on" : "segbtn", "aria-pressed": state.mode === m, onClick: () => dispatch({ type: "MODE", mode: m }) }, t(m), " \xB7 ", t(m + "Age")))), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("modeNote"))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("engSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: ENGLISH, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("lifeSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: LIFE, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("missionsDone")), done.length === 0 ? /* @__PURE__ */ react_default.createElement("p", { className: "empty" }, t("noneYet")) : /* @__PURE__ */ react_default.createElement("ul", { className: "donelist" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, /* @__PURE__ */ react_default.createElement(Icon, { name: "check", size: 18 }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, loc(m.title, lang)), /* @__PURE__ */ react_default.createElement("small", null, loc(m.objective, lang)))))), done.length > 0 && /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("h3", null, t("sentences")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist", lang: "en" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, m.target))), /* @__PURE__ */ react_default.createElement("h3", null, t("words")), /* @__PURE__ */ react_default.createElement("p", { className: "wordcloud", lang: "en" }, words.map((w) => /* @__PURE__ */ react_default.createElement("span", { key: w.w }, w.w))))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("voiceTitle")), /* @__PURE__ */ react_default.createElement(VoicePicker, { t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("aboutData")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist" }, /* @__PURE__ */ react_default.createElement("li", null, saved ? t("savedOk") : t("savedNo")), /* @__PURE__ */ react_default.createElement("li", null, t("noPersonal")), /* @__PURE__ */ react_default.createElement("li", null, t("contentNote"))), ask ? /* @__PURE__ */ react_default.createElement("div", { className: "confirm", role: "alertdialog", "aria-label": t("reset") }, /* @__PURE__ */ react_default.createElement("p", null, t("resetAsk")), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
       dispatch({ type: "RESET" });
       go("city");
     } }, t("resetYes")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setAsk(false) }, t("cancel")))) : /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setAsk(true) }, t("reset")))));
@@ -2048,15 +2094,7 @@
     useEffect(() => {
       setSaved(save(root2));
     }, [root2]);
-    useEffect(() => {
-      const start2 = () => unlockMusic();
-      window.addEventListener("pointerdown", start2, { once: true });
-      window.addEventListener("keydown", start2, { once: true });
-      return () => {
-        window.removeEventListener("pointerdown", start2);
-        window.removeEventListener("keydown", start2);
-      };
-    }, []);
+    useEffect(() => armMusic(), []);
     useEffect(() => {
       document.documentElement.lang = root2.lang;
     }, [root2.lang]);

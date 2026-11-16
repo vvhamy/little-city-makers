@@ -2,8 +2,8 @@
 // A slow, soft loop (music-box bells over a warm pad) in C major. It is deliberately quiet, ducks while the
 // voice is speaking, pauses when the tab is hidden, and never starts before the child's first tap
 // (browsers do not allow sound before that). The on/off choice is remembered on this device only.
+import { readPrefs, writePrefs } from './prefs.js';
 
-const KEY = 'little-city-makers.audio';
 const LEVEL = 0.07;    // master loudness (0–1). Kept low so it never competes with the voice.
 const DUCKED = 0.35;   // fraction of the level while the voice speaks
 const BPM = 76;
@@ -22,7 +22,9 @@ const hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
 const AC = typeof window !== 'undefined' ? window.AudioContext || window.webkitAudioContext : null;
 export const musicSupported = !!AC;
 
+const readPref = () => readPrefs().music; // on unless a grown-up turned it off
 let enabled = readPref();
+const writePref = () => writePrefs({ music: enabled });
 let ctx = null;
 let master = null;
 let timer = null;
@@ -32,17 +34,6 @@ let lastMel = 2;
 let ducked = false;
 const listeners = new Set();
 
-function readPref() {
-  try {
-    const v = JSON.parse(localStorage.getItem(KEY) || '{}');
-    return v.music !== false; // on unless a grown-up turned it off
-  } catch {
-    return true;
-  }
-}
-function writePref() {
-  try { localStorage.setItem(KEY, JSON.stringify({ music: enabled })); } catch { /* the choice just is not remembered */ }
-}
 const emit = () => listeners.forEach((f) => f(enabled));
 
 export const musicEnabled = () => enabled;
@@ -144,11 +135,25 @@ function ensure() {
   }
 }
 
-// Call from a tap or key press. Safe to call many times.
+// Call from a tap or key press. Safe to call many times. If the browser still refuses (state "suspended"
+// or "interrupted"), the next gesture simply tries again.
 export function unlockMusic() {
   if (!enabled || !musicSupported || !ensure()) return;
   const go = () => { nextBarTime = Math.max(nextBarTime, ctx.currentTime + 0.2); ramp(3); };
-  if (ctx.state === 'suspended') ctx.resume().then(go).catch(() => {}); else go();
+  if (ctx.state !== 'running') ctx.resume().then(go).catch(() => {}); else go();
+}
+
+// Touch screens only count a tap as a "user gesture" when the finger lifts (pointerup / click), not on
+// pointerdown, so listen for all of them and keep trying until the music is really running.
+export function armMusic() {
+  const events = ['pointerup', 'click', 'touchend', 'keydown'];
+  const stop = () => events.forEach((e) => window.removeEventListener(e, handler, true));
+  function handler() {
+    if (ctx && ctx.state === 'running') { stop(); return; }
+    unlockMusic();
+  }
+  events.forEach((e) => window.addEventListener(e, handler, true));
+  return stop;
 }
 
 export function setMusic(on) {

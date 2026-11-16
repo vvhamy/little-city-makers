@@ -1,7 +1,8 @@
 // Shared interface pieces: icons, audio, modal, top bar, progress bar.
 import React, { useEffect, useState } from 'react';
 import { LANGS } from '../data/i18n.js';
-import { VOICE, pickVoice } from '../audio/voice.js';
+import { VOICE, englishVoices, pickVoice } from '../audio/voice.js';
+import { readPrefs, writePrefs } from '../audio/prefs.js';
 import { duckMusic, musicEnabled, musicSupported, setMusic, subscribeMusic } from '../audio/music.js';
 
 const PATHS = {
@@ -40,7 +41,7 @@ export const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in wi
 
 // Voices load late in some browsers, so the choice is made on first use and again when the list changes.
 let voice = null;
-const choose = () => { try { voice = pickVoice(window.speechSynthesis.getVoices()); } catch { voice = null; } };
+const choose = () => { try { voice = pickVoice(window.speechSynthesis.getVoices(), readPrefs().voice); } catch { voice = null; } };
 if (canSpeak) {
   choose();
   try { window.speechSynthesis.addEventListener('voiceschanged', choose); } catch { /* older browsers */ }
@@ -49,6 +50,7 @@ if (canSpeak) {
 export function speak(text) {
   if (!canSpeak || !text) return;
   try {
+    if (!voice) choose(); // some browsers fill the voice list late
     const clean = String(text).replace(/[^\p{L}\p{N}\p{P}\s]/gu, '').replace(/_+/g, ' ');
     const u = new SpeechSynthesisUtterance(clean);
     u.lang = 'en-US';
@@ -64,6 +66,34 @@ export function speak(text) {
   } catch {
     /* audio is a helper; the game works without it */
   }
+}
+
+// Grown-ups can pick which of the device's English voices reads aloud. Saved on this device only.
+export function VoicePicker({ t }) {
+  const [list, setList] = useState(() => (canSpeak ? englishVoices(window.speechSynthesis.getVoices()) : []));
+  const [name, setName] = useState(() => readPrefs().voice || '');
+  useEffect(() => {
+    if (!canSpeak) return undefined;
+    const sync = () => setList(englishVoices(window.speechSynthesis.getVoices()));
+    sync();
+    window.speechSynthesis.addEventListener('voiceschanged', sync);
+    return () => window.speechSynthesis.removeEventListener('voiceschanged', sync);
+  }, []);
+  if (!canSpeak || list.length === 0) return <p className="fine left">{t('voiceNone')}</p>;
+  const pick = (v) => { setName(v); writePrefs({ voice: v || null }); choose(); };
+  return (
+    <div className="voicepick">
+      <label htmlFor="voice-select" className="sr">{t('voiceTitle')}</label>
+      <div className="row">
+        <select id="voice-select" value={name} onChange={(e) => pick(e.target.value)}>
+          <option value="">{t('voiceAuto')}</option>
+          {list.map((v) => <option key={v.name} value={v.name}>{v.name} ({v.lang})</option>)}
+        </select>
+        <button type="button" className="btn small" onClick={() => speak("Hello! Let's build a city together.")}><Icon name="speaker" size={18} />{t('voiceTest')}</button>
+      </div>
+      <p className="fine left">{t('voiceHelp')}</p>
+    </div>
+  );
 }
 
 // On/off button for the background music. Hidden when the browser cannot play generated audio.
