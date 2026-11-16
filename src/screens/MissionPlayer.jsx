@@ -1,7 +1,7 @@
 // Screen 4 (Learning Activity) and the practice activity inside each building (Screen 6).
 // Flow: intro -> steps -> reward. Completion = every step solved.
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { Icon, Listen, canSpeak, shuffle, speak } from '../components/ui.jsx';
+import { Icon, Listen, MusicToggle, canSpeak, shuffle, speak } from '../components/ui.jsx';
 import { Kid } from '../art/Characters.jsx';
 import { BuildingThumb } from '../art/BuildingArt.jsx';
 import { PRAISE, loc, sup } from '../data/i18n.js';
@@ -64,7 +64,7 @@ export function MissionPlayer({ mission, building, mode, lang, t, practice, wasD
             {steps.map((_, k) => <i key={k} className={k < i || (k === i && solved) ? 'done' : k === i ? 'cur' : ''} />)}
           </div>
         ) : <span />}
-        <span className="pill">{t(mode)}</span>
+        <span className="playbar-right"><MusicToggle t={t} /><span className="pill">{t(mode)}</span></span>
       </header>
 
       <main className="playmain">

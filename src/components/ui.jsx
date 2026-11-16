@@ -1,6 +1,8 @@
 // Shared interface pieces: icons, audio, modal, top bar, progress bar.
 import React, { useEffect, useState } from 'react';
 import { LANGS } from '../data/i18n.js';
+import { VOICE, pickVoice } from '../audio/voice.js';
+import { duckMusic, musicEnabled, musicSupported, setMusic, subscribeMusic } from '../audio/music.js';
 
 const PATHS = {
   back: 'M15 5l-7 7 7 7',
@@ -20,6 +22,8 @@ const PATHS = {
   mic: 'M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v3',
   next: 'M9 5l7 7-7 7',
   plus: 'M12 5v14M5 12h14',
+  music: 'M9 18V6l10-2v12M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0z',
+  musicoff: 'M9 18V6l10-2v12M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0zM3 3l18 18',
   trash: 'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13M10 11v6M14 11v6',
 };
 
@@ -34,18 +38,45 @@ export function Icon({ name, size = 22 }) {
 // Audio uses the device's built-in speech voice. If the browser has none, Listen buttons are not shown.
 export const canSpeak = typeof window !== 'undefined' && 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
 
+// Voices load late in some browsers, so the choice is made on first use and again when the list changes.
+let voice = null;
+const choose = () => { try { voice = pickVoice(window.speechSynthesis.getVoices()); } catch { voice = null; } };
+if (canSpeak) {
+  choose();
+  try { window.speechSynthesis.addEventListener('voiceschanged', choose); } catch { /* older browsers */ }
+}
+
 export function speak(text) {
   if (!canSpeak || !text) return;
   try {
     const clean = String(text).replace(/[^\p{L}\p{N}\p{P}\s]/gu, '').replace(/_+/g, ' ');
     const u = new SpeechSynthesisUtterance(clean);
     u.lang = 'en-US';
-    u.rate = 0.85;
+    if (voice) { u.voice = voice; u.lang = voice.lang; }
+    u.rate = VOICE.rate;
+    u.pitch = VOICE.pitch;
+    u.volume = VOICE.volume;
+    u.onstart = () => duckMusic(true);
+    u.onend = () => duckMusic(false);
+    u.onerror = () => duckMusic(false);
     window.speechSynthesis.cancel();
     window.speechSynthesis.speak(u);
   } catch {
     /* audio is a helper; the game works without it */
   }
+}
+
+// On/off button for the background music. Hidden when the browser cannot play generated audio.
+export function MusicToggle({ t }) {
+  const [on, setOn] = useState(musicEnabled());
+  useEffect(() => subscribeMusic(setOn), []);
+  if (!musicSupported) return null;
+  const label = t(on ? 'musicOff' : 'musicOn');
+  return (
+    <button type="button" className="round music-toggle" onClick={() => setMusic(!on)} aria-label={label} aria-pressed={on} title={label}>
+      <Icon name={on ? 'music' : 'musicoff'} />
+    </button>
+  );
 }
 
 export function Listen({ text, label, big }) {

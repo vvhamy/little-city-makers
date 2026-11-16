@@ -44,6 +44,8 @@ export const UI = {
   city: s('City', 'Thành phố', '도시'),
   back: s('Back', 'Quay lại', '뒤로'),
   close: s('Close', 'Đóng', '닫기'),
+  musicOff: s('Turn music off', 'Tắt nhạc', '음악 끄기'),
+  musicOn: s('Turn music on', 'Bật nhạc', '음악 켜기'),
   cancel: s('Cancel', 'Hủy', '취소'),
   done: s('Done', 'Xong', '완료'),
   letsGo: s("Let's go", 'Bắt đầu thôi', '시작하기'),
