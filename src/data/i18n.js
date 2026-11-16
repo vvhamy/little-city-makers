@@ -1,0 +1,201 @@
+// Interface strings. English is the teaching language; Vietnamese and Korean are support languages.
+// Learning content (missions.js) stays in English and carries optional {vi, ko} glosses.
+
+export const LANGS = [
+  { id: 'en', label: 'English' },
+  { id: 'vi', label: 'Tiếng Việt' },
+  { id: 'ko', label: '한국어' },
+];
+
+const s = (en, vi, ko) => ({ en, vi, ko });
+
+export const UI = {
+  tagline: s('Learn. Build. Belong.', 'Học. Xây. Gắn kết.', '배우고, 짓고, 함께해요.'),
+  start: s('Start Building', 'Bắt đầu xây', '도시 만들기 시작'),
+  continue: s('Continue my city', 'Tiếp tục thành phố của mình', '내 도시 이어서 하기'),
+  chooseLang: s('Language', 'Ngôn ngữ', '언어'),
+  chooseAge: s('Who is playing?', 'Ai đang chơi?', '누가 플레이하나요?'),
+  little: s('Little Makers', 'Little Makers', 'Little Makers'),
+  littleAge: s('Ages 4–6', '4–6 tuổi', '4–6세'),
+  littleDesc: s('Pictures, sounds and short games', 'Hình ảnh, âm thanh và trò chơi ngắn', '그림, 소리, 짧은 놀이'),
+  junior: s('Junior Makers', 'Junior Makers', 'Junior Makers'),
+  juniorAge: s('Ages 7–10', '7–10 tuổi', '7–10세'),
+  juniorDesc: s('Sentences, reading and bigger missions', 'Đặt câu, bài đọc và nhiệm vụ lớn hơn', '문장, 읽기, 더 큰 미션'),
+  privacy: s('No names. No accounts. Progress stays in this browser.', 'Không cần tên. Không cần tài khoản. Tiến độ chỉ lưu trên trình duyệt này.', '이름도 계정도 필요 없어요. 진행 상황은 이 브라우저에만 저장돼요.'),
+
+  missions: s('Missions', 'Nhiệm vụ', '미션'),
+  build: s('Build', 'Xây dựng', '짓기'),
+  myCity: s('My City', 'Thành phố của mình', '내 도시'),
+  grownups: s('Grown-ups', 'Phụ huynh', '보호자'),
+  city: s('City', 'Thành phố', '도시'),
+  back: s('Back', 'Quay lại', '뒤로'),
+  close: s('Close', 'Đóng', '닫기'),
+  cancel: s('Cancel', 'Hủy', '취소'),
+  done: s('Done', 'Xong', '완료'),
+  letsGo: s("Let's go", 'Bắt đầu thôi', '시작하기'),
+  emptyPlot: s('Empty spot', 'Ô đất trống', '빈 자리'),
+  cityMap: s('City map', 'Bản đồ thành phố', '도시 지도'),
+
+  lv0: s('Empty Land', 'Đất trống', '빈 땅'),
+  lv1: s('Little Village', 'Ngôi làng nhỏ', '작은 마을'),
+  lv2: s('Friendly Town', 'Thị trấn thân thiện', '다정한 동네'),
+  lv3: s('Busy City', 'Thành phố nhộn nhịp', '활기찬 도시'),
+  lv4: s('Welcoming City', 'Thành phố chào đón mọi người', '모두를 환영하는 도시'),
+  buildingsCount: s('{n} of {total} buildings', '{n}/{total} công trình', '건물 {n}/{total}'),
+
+  g_first: s("Hi, I am Pip, your building guide! This land is empty. Let's do a mission to get your first building.", 'Chào bạn, mình là Pip, người hướng dẫn xây dựng! Mảnh đất này còn trống. Cùng làm nhiệm vụ để nhận công trình đầu tiên nhé.', '안녕, 나는 건축 안내자 핍이야! 이 땅은 아직 비어 있어. 미션을 하고 첫 건물을 받아 보자.'),
+  g_permit: s('You have a building permit! Tap Build and choose a spot.', 'Bạn có giấy phép xây dựng rồi! Chạm Xây dựng và chọn một ô đất.', '건축 허가증이 있어! 짓기를 누르고 자리를 골라 봐.'),
+  g_more: s('Missions are open. What will our city learn next?', 'Có nhiệm vụ đang mở. Thành phố mình sẽ học gì tiếp theo nhỉ?', '미션이 열려 있어. 우리 도시는 다음에 무엇을 배울까?'),
+  g_done: s('Our city is complete! Tap a building to practice any time.', 'Thành phố đã hoàn thành! Chạm vào công trình để luyện tập bất cứ lúc nào.', '도시가 완성됐어! 건물을 눌러 언제든 연습해 봐.'),
+  g_choose: s('Choose a building, then tap a glowing spot.', 'Chọn một công trình, rồi chạm vào ô đất đang sáng.', '건물을 고른 다음 빛나는 자리를 눌러 봐.'),
+  g_noPermit: s('Finish a mission to get a building permit.', 'Hoàn thành một nhiệm vụ để nhận giấy phép xây dựng.', '미션을 끝내면 건축 허가증을 받아.'),
+  g_fit: s('A perfect spot! {b} fits {c}.', 'Vị trí tuyệt vời! {b} rất hợp với {c}.', '딱 맞는 자리야! {b}, {c}에 잘 어울려.'),
+  g_own: s('Nice choice! You picked your own spot for {b}.', 'Lựa chọn hay đấy! Bạn đã tự chọn chỗ cho {b}.', '좋은 선택이야! {b} 자리를 스스로 골랐구나.'),
+  g_move: s('Tap an empty spot to move {b}.', 'Chạm vào một ô trống để chuyển {b}.', '빈 자리를 눌러 {b} 건물을 옮겨 봐.'),
+  g_moved: s('{b} has a new spot!', '{b} đã có chỗ mới!', '{b}, 새 자리로 옮겼어!'),
+  g_newMissions: s('New missions opened!', 'Nhiệm vụ mới đã mở!', '새 미션이 열렸어!'),
+  g_taken: s('This spot is taken. Tap a glowing one.', 'Ô này đã có công trình. Hãy chạm vào ô đang sáng.', '이 자리는 이미 찼어. 빛나는 자리를 눌러 봐.'),
+
+  missionCenter: s('Mission Center', 'Trung tâm nhiệm vụ', '미션 센터'),
+  goal: s('Learning goal', 'Mục tiêu học', '학습 목표'),
+  st_new: s('New', 'Mới', '새 미션'),
+  st_done: s('Done', 'Đã xong', '완료'),
+  st_locked: s('Build {n} buildings to open', 'Xây {n} công trình để mở', '건물 {n}개를 지으면 열려요'),
+  play: s('Play', 'Chơi', '시작'),
+  playAgain: s('Play again', 'Chơi lại', '다시 하기'),
+  missionsProgress: s('{n} of {total} missions done', 'Đã xong {n}/{total} nhiệm vụ', '미션 {n}/{total} 완료'),
+  p_english: s('English', 'Tiếng Anh', '영어'),
+  p_culture: s('Culture', 'Văn hóa', '문화'),
+  p_life: s('Life skills', 'Kỹ năng sống', '생활 기술'),
+  p_sel: s('Feelings & friends', 'Cảm xúc & bạn bè', '감정과 친구'),
+
+  newWords: s('New words', 'Từ mới', '새 단어'),
+  weSay: s('We will say', 'Chúng ta sẽ nói', '이렇게 말해요'),
+  startMission: s('Start mission', 'Bắt đầu nhiệm vụ', '미션 시작'),
+  stepOf: s('Step {n} of {total}', 'Bước {n}/{total}', '{total}단계 중 {n}단계'),
+  i_pick: s('Tap the right answer.', 'Chạm vào câu trả lời đúng.', '알맞은 답을 눌러요.'),
+  i_order: s('Tap the pieces in the right order.', 'Chạm các mảnh theo đúng thứ tự.', '순서에 맞게 조각을 눌러요.'),
+  i_type: s('Type the missing word.', 'Gõ từ còn thiếu.', '빠진 단어를 써요.'),
+  i_choice: s('What would you do?', 'Bạn sẽ làm gì?', '어떻게 할까요?'),
+  i_sort: s('Drag each thing to the right bin. You can also tap it, then tap a bin.', 'Kéo từng món vào đúng thùng. Bạn cũng có thể chạm vào món đó rồi chạm vào thùng.', '물건을 알맞은 통에 끌어다 놓아요. 물건을 누른 다음 통을 눌러도 돼요.'),
+  i_say: s('Say it out loud!', 'Hãy nói thật to!', '큰 소리로 말해 봐요!'),
+  i_learn: s('Look and listen.', 'Nhìn và nghe.', '보고 들어요.'),
+  listen: s('Listen', 'Nghe', '듣기'),
+  check: s('Check', 'Kiểm tra', '확인'),
+  next: s('Next', 'Tiếp', '다음'),
+  finish: s('Finish', 'Hoàn thành', '끝내기'),
+  iSaidIt: s('I said it!', 'Mình nói rồi!', '말했어요!'),
+  noRecord: s('The game does not record your voice.', 'Trò chơi không ghi âm giọng nói.', '이 게임은 목소리를 녹음하지 않아요.'),
+  tryAgain: s('Good try! Look again.', 'Cố lên! Bạn xem lại nhé.', '좋은 시도예요! 다시 한번 볼까요?'),
+  hint: s('Hint: it starts with “{x}”.', 'Gợi ý: từ này bắt đầu bằng “{x}”.', '힌트: “{x}”(으)로 시작해요.'),
+  yourAnswer: s('Your answer', 'Câu trả lời của bạn', '내 답'),
+  tryAnother: s('Try another idea', 'Thử ý khác', '다른 생각 해 보기'),
+  praise: s('Great job!', 'Giỏi lắm!', '참 잘했어요!'),
+  leave: s('Leave mission', 'Rời nhiệm vụ', '미션 나가기'),
+
+  missionDone: s('Mission complete!', 'Hoàn thành nhiệm vụ!', '미션 완료!'),
+  practiced: s('Practice complete!', 'Luyện tập xong!', '연습 완료!'),
+  cityLesson: s('City lesson', 'Bài học của thành phố', '도시의 교훈'),
+  permit: s('Building permit', 'Giấy phép xây dựng', '건축 허가증'),
+  buildNow: s('Build it now', 'Xây ngay', '지금 짓기'),
+  backCity: s('Back to the city', 'Về thành phố', '도시로 돌아가기'),
+  decoUnlocked: s('New decoration for this building: {d}', 'Trang trí mới cho công trình này: {d}', '이 건물의 새 장식: {d}'),
+  breakTime: s('You finished {n} missions in this visit. A good time to rest your eyes and play away from the screen!', 'Bạn đã xong {n} nhiệm vụ trong lần chơi này. Đã đến lúc cho mắt nghỉ và chơi xa màn hình rồi!', '이번에 미션을 {n}개 끝냈어요. 이제 눈을 쉬고 화면 밖에서 놀 시간이에요!'),
+
+  inventory: s('Building inventory', 'Kho công trình', '건물 보관함'),
+  ready: s('Ready to build', 'Sẵn sàng xây', '지을 수 있어요'),
+  onMap: s('In the city', 'Đã ở trong thành phố', '도시에 있어요'),
+  lockedBy: s('Mission: {m}', 'Nhiệm vụ: {m}', '미션: {m}'),
+  tapPlot: s('Tap a glowing spot to build.', 'Chạm vào ô đất đang sáng để xây.', '빛나는 자리를 눌러 지어요.'),
+  constructing: s('Building…', 'Đang xây…', '짓는 중…'),
+  weLearn: s('What we learn here', 'Ở đây chúng ta học', '여기서 배우는 것'),
+  practiceHere: s('Practice here', 'Luyện tập ở đây', '여기서 연습하기'),
+  decorate: s('Decorate', 'Trang trí', '꾸미기'),
+  move: s('Move', 'Di chuyển', '옮기기'),
+  color: s('Color', 'Màu sắc', '색깔'),
+  decoration: s('Decoration', 'Đồ trang trí', '장식'),
+  d_none: s('None', 'Không', '없음'),
+  d_flowers: s('Flowers', 'Hoa', '꽃'),
+  d_flag: s('Flag', 'Cờ', '깃발'),
+  d_lights: s('Lights', 'Đèn', '조명'),
+  practiceToUnlock: s('Practice {n}× to unlock', 'Luyện tập {n} lần để mở', '{n}번 연습하면 열려요'),
+
+  achievements: s('City Achievements', 'Thành tích thành phố', '도시 업적'),
+  cityGrowth: s('City growth', 'Sự phát triển của thành phố', '도시 성장'),
+  milestones: s('Learning milestones', 'Cột mốc học tập', '학습 성과'),
+  missionsDone: s('Completed missions', 'Nhiệm vụ đã hoàn thành', '완료한 미션'),
+  buildingsUnlocked: s('Unlocked buildings', 'Công trình đã mở', '열린 건물'),
+  noneYet: s('Nothing here yet. Your first mission is waiting!', 'Chưa có gì ở đây. Nhiệm vụ đầu tiên đang chờ bạn!', '아직 아무것도 없어요. 첫 미션이 기다리고 있어요!'),
+  ms_first: s('First Builder', 'Người xây đầu tiên', '첫 건축가'),
+  ms_polite: s('Polite Speaker', 'Người nói lịch sự', '예의 바른 말하기'),
+  ms_reader: s('Book Explorer', 'Nhà thám hiểm sách', '책 탐험가'),
+  ms_kind: s('Kind Friend', 'Người bạn tử tế', '다정한 친구'),
+  ms_green: s('Park Helper', 'Người giúp công viên', '공원 도우미'),
+  ms_safe: s('Safety Star', 'Ngôi sao an toàn', '안전 스타'),
+  ms_culture: s('Culture Explorer', 'Nhà khám phá văn hóa', '문화 탐험가'),
+  ms_helper: s('Community Helper', 'Người giúp cộng đồng', '마을 도우미'),
+  ms_town: s('Town Maker (5 buildings)', 'Người xây thị trấn (5 công trình)', '동네 건축가 (건물 5개)'),
+  ms_cityMaker: s('City Maker (10 buildings)', 'Người kiến tạo thành phố (10 công trình)', '도시 건축가 (건물 10개)'),
+
+  parentTitle: s('Parent Dashboard', 'Bảng theo dõi dành cho phụ huynh', '보호자 대시보드'),
+  gateQ: s('Grown-ups only. What is {a} × {b}?', 'Chỉ dành cho người lớn. {a} × {b} bằng bao nhiêu?', '보호자 전용입니다. {a} × {b}는 얼마인가요?'),
+  gateWrong: s('That is not right. Please try again.', 'Chưa đúng. Vui lòng thử lại.', '틀렸어요. 다시 시도해 주세요.'),
+  open: s('Open', 'Mở', '열기'),
+  modeLabel: s('Learning mode', 'Chế độ học', '학습 모드'),
+  modeNote: s('Children develop at different speeds. Choose the mode that fits your child, not only their age.', 'Mỗi trẻ phát triển theo tốc độ riêng. Hãy chọn chế độ phù hợp với con, không chỉ dựa vào tuổi.', '아이마다 발달 속도가 달라요. 나이만 보지 말고 아이에게 맞는 모드를 골라 주세요.'),
+  overview: s('Overview', 'Tổng quan', '요약'),
+  engSkills: s('English skills practiced', 'Kỹ năng tiếng Anh đã luyện', '연습한 영어 기능'),
+  lifeSkills: s('Life skills and values practiced', 'Kỹ năng sống và giá trị đã luyện', '연습한 생활 기술과 가치'),
+  activities: s('{n} activities', '{n} hoạt động', '활동 {n}개'),
+  notYet: s('Not practiced yet', 'Chưa luyện', '아직 연습 전'),
+  words: s('Words met', 'Từ đã gặp', '만난 단어'),
+  sentences: s('Sentences practiced', 'Câu đã luyện', '연습한 문장'),
+  aboutData: s('Safety and data', 'An toàn và dữ liệu', '안전과 데이터'),
+  savedOk: s('Progress is saved in this browser only. Nothing is sent anywhere.', 'Tiến độ chỉ được lưu trên trình duyệt này. Không có dữ liệu nào được gửi đi.', '진행 상황은 이 브라우저에만 저장되며 어디에도 전송되지 않습니다.'),
+  savedNo: s('This browser is blocking storage, so progress will be lost when the page closes.', 'Trình duyệt này đang chặn lưu trữ nên tiến độ sẽ mất khi đóng trang.', '이 브라우저가 저장을 차단하고 있어 페이지를 닫으면 진행 상황이 사라집니다.'),
+  noPersonal: s('The game never asks for a name, address, school or phone number. There is no leaderboard, no chat and nothing to buy.', 'Trò chơi không bao giờ hỏi tên, địa chỉ, trường học hay số điện thoại. Không có bảng xếp hạng, không trò chuyện và không có gì để mua.', '이 게임은 이름, 주소, 학교, 전화번호를 묻지 않습니다. 순위표, 채팅, 구매 요소가 없습니다.'),
+  contentNote: s("All activities use fixed, pre-written content. No live AI talks with your child. Speaking steps are not recorded or checked. Audio uses your device's built-in voice.", 'Mọi hoạt động dùng nội dung soạn sẵn. Không có AI trò chuyện trực tiếp với trẻ. Phần luyện nói không được ghi âm hay chấm điểm. Âm thanh dùng giọng đọc có sẵn trên thiết bị.', '모든 활동은 미리 작성된 내용을 사용합니다. 아이와 실시간으로 대화하는 AI는 없습니다. 말하기 단계는 녹음하거나 평가하지 않습니다. 음성은 기기의 기본 음성을 사용합니다.'),
+  reset: s('Reset progress', 'Xóa tiến độ', '진행 상황 초기화'),
+  resetAsk: s('Erase the city and all progress? This cannot be undone.', 'Xóa thành phố và toàn bộ tiến độ? Không thể hoàn tác.', '도시와 모든 진행 상황을 지울까요? 되돌릴 수 없습니다.'),
+  resetYes: s('Yes, erase', 'Có, xóa', '네, 지울게요'),
+
+  sk_listening: s('Listening', 'Nghe', '듣기'),
+  sk_speaking: s('Speaking', 'Nói', '말하기'),
+  sk_reading: s('Reading', 'Đọc', '읽기'),
+  sk_writing: s('Writing', 'Viết', '쓰기'),
+  sk_vocabulary: s('Vocabulary', 'Từ vựng', '어휘'),
+  sk_polite: s('Politeness', 'Lịch sự', '예절'),
+  sk_kindness: s('Kindness and sharing', 'Tử tế và chia sẻ', '친절과 나눔'),
+  sk_responsibility: s('Responsibility', 'Trách nhiệm', '책임감'),
+  sk_empathy: s('Empathy', 'Đồng cảm', '공감'),
+  sk_safety: s('Personal safety', 'An toàn cá nhân', '개인 안전'),
+  sk_culture: s('Cultural awareness', 'Hiểu biết văn hóa', '문화 이해'),
+  sk_thinking: s('Thinking and problem-solving', 'Tư duy và giải quyết vấn đề', '생각하기와 문제 해결'),
+  sk_courage: s('Courage', 'Dũng cảm', '용기'),
+  sk_belonging: s('Home and belonging', 'Gia đình và sự gắn bó', '가정과 소속감'),
+
+  c_home: s('Home Street', 'Phố Nhà Ở', '주택가'),
+  c_learn: s('Learning Corner', 'Góc Học Tập', '배움 마당'),
+  c_community: s("Helpers' Square", 'Quảng trường Giúp Đỡ', '도움 광장'),
+  c_shop: s('Shop Street', 'Phố Mua Sắm', '상점가'),
+  c_culture: s('Culture Quarter', 'Khu Văn Hóa', '문화 지구'),
+  c_green: s('Green Corner', 'Góc Xanh', '초록 마당'),
+};
+
+export const PRAISE = ['Great job!', 'You did it!', 'Wonderful!', 'Nice work!'];
+
+export function makeT(lang) {
+  return (key, vars) => {
+    const entry = UI[key];
+    let out = entry ? entry[lang] ?? entry.en : key;
+    if (vars) for (const k in vars) out = out.replaceAll(`{${k}}`, vars[k]);
+    return out;
+  };
+}
+
+// Text in the interface language (falls back to English).
+export const loc = (v, lang) => (v == null ? '' : typeof v === 'string' ? v : v[lang] ?? v.en);
+// The English teaching text.
+export const en = (v) => (v == null ? '' : typeof v === 'string' ? v : v.en);
+// Support-language gloss, only when the player chose Vietnamese or Korean.
+export const sup = (v, lang) => (lang !== 'en' && v && typeof v === 'object' ? v[lang] ?? null : null);
