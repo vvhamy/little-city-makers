@@ -989,8 +989,9 @@
   }
 
   // src/audio/music.js
-  var LEVEL = 0.07;
-  var DUCKED = 0.35;
+  var LEVEL = 0.3;
+  var DUCKED = 0.3;
+  var DUCK_MAX_MS = 9e3;
   var BPM = 76;
   var BEAT = 60 / BPM;
   var BARS = [
@@ -1016,6 +1017,7 @@
   var bar = 0;
   var lastMel = 2;
   var ducked = false;
+  var duckTimer = null;
   var listeners = /* @__PURE__ */ new Set();
   var emit = () => listeners.forEach((f) => f(enabled));
   var musicEnabled = () => enabled;
@@ -1093,6 +1095,10 @@
   function ensure() {
     if (ctx || !AC) return !!ctx;
     try {
+      try {
+        if (navigator.audioSession) navigator.audioSession.type = "playback";
+      } catch {
+      }
       ctx = new AC();
       const filter = ctx.createBiquadFilter();
       filter.type = "lowpass";
@@ -1145,7 +1151,12 @@
   }
   function duckMusic(on) {
     ducked = !!on;
-    ramp(0.25);
+    clearTimeout(duckTimer);
+    if (ducked) duckTimer = setTimeout(() => {
+      ducked = false;
+      ramp(0.6);
+    }, DUCK_MAX_MS);
+    ramp(ducked ? 0.25 : 0.8);
   }
 
   // src/audio/voice.js
