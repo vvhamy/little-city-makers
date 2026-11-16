@@ -9,15 +9,15 @@ Order matters: content quality and safety review come before more features.
 - [ ] Test with real children in both modes; adjust reading load and step length
 - [ ] Accessibility pass: screen reader, keyboard, contrast, 200% text size
 
-## 2. Finish the building set (13 left)
+## 2. Finish the building set (12 left; Café done)
 Residential: Apartment Building, Family House
 Education: English School, Art Studio, Science Lab
 Community: Fire Station
-Commercial: Grocery Store, Café
+Commercial: Grocery Store
 Culture: World Museum, Storytelling Theater
 Environment: Recycling Center, Community Garden, Clean Energy Station
 Each needs a mission (both modes), vi/ko text, art recipe, and a plot or a larger map.
-Café (“I would like…”) and Grocery (numbers, money) are the best next English missions.
+Grocery (numbers, money) is the best next English mission. The plot grid has 12 plots; enlarge it when the 13th building arrives.
 
 ## 3. Deeper learning
 - [ ] Spaced revisiting of earlier vocabulary inside later missions

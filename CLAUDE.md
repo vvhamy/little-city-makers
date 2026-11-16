@@ -47,4 +47,4 @@ Run both before finishing a task. A task is not done if `npm run check` fails.
 - Speaking steps are not recorded or assessed. The UI says so.
 - Audio uses the browser speech voice. Production needs recorded audio.
 - Players are local profiles in localStorage on one device. No accounts, no server, no sync between devices. There is no leaderboard by design (see rule 6); do not add one without an explicit decision from the owner and a privacy review.
-- 10 of the 23 planned buildings exist. See ROADMAP.md.
+- 11 of the 23 planned buildings exist (Café added). See ROADMAP.md.

@@ -1,9 +1,9 @@
 // Screen 2 (City Map), Screen 5 (Construction Mode) and Screen 6's entry point (building panel).
 import React, { useEffect, useRef, useState } from 'react';
-import { Icon, LangSelect, Meter, Modal } from '../components/ui.jsx';
+import { Icon, LangSelect, Meter, Modal, ParentGate } from '../components/ui.jsx';
 import { CityMap } from '../art/CityMap.jsx';
 import { BuildingThumb, COLORS } from '../art/BuildingArt.jsx';
-import { Pip } from '../art/Characters.jsx';
+import { Kid, Pip } from '../art/Characters.jsx';
 import { BUILDINGS, BUILDINGS_BY_ID, DECOS, PLOTS_BY_ID, TOTAL_BUILDINGS } from '../data/buildings.js';
 import { MISSIONS, MISSIONS_BY_ID } from '../data/missions.js';
 import { loc, sup } from '../data/i18n.js';
@@ -11,7 +11,7 @@ import { levelOf, missionStatus, openMissionCount, permitsOf, placedCount, place
 
 const BUILD_MS = 1700;
 
-export function City({ state, dispatch, t, lang, go, initialBuild, onPractice }) {
+export function City({ state, dispatch, t, lang, go, player, initialBuild, onPractice }) {
   const placed = placedMap(state);
   const n = placedCount(state);
   const permits = permitsOf(state);
@@ -93,6 +93,10 @@ export function City({ state, dispatch, t, lang, go, initialBuild, onPractice })
         <button type="button" className="brand" onClick={() => go('welcome')} aria-label="Little City Makers">
           <span className="brandmark" aria-hidden="true"><i /><i /><i /></span>
           <span className="brandname">Little City Makers</span>
+        </button>
+        <button type="button" className="btn small player-chip" onClick={() => go('welcome')} aria-label={`${t('switchPlayer')}: ${player?.nick || ''}`}>
+          {player && <Kid id={player.avatar} size={30} />}
+          <span className="hide-s">{player?.nick}</span>
         </button>
         <div className="levelbox">
           <b>{t('lv' + level)}</b>
@@ -218,29 +222,6 @@ function BuildingPanel({ plotId, state, dispatch, t, lang, onClose, onPractice, 
           })}
         </div>
       </section>
-    </Modal>
-  );
-}
-
-// A light gate so small children do not wander into the grown-up area. It is not a security feature.
-function ParentGate({ t, onClose, onPass }) {
-  const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
-  const [val, setVal] = useState('');
-  const [wrong, setWrong] = useState(false);
-  const submit = (e) => {
-    e.preventDefault();
-    if (Number(val) === q.a * q.b) onPass(); else setWrong(true);
-  };
-  return (
-    <Modal title={t('grownups')} onClose={onClose} closeLabel={t('close')}>
-      <form className="gate" onSubmit={submit}>
-        <label htmlFor="gate-answer">{t('gateQ', q)}</label>
-        <div className="row">
-          <input id="gate-answer" type="text" inputMode="numeric" autoComplete="off" value={val} onChange={(e) => { setVal(e.target.value); setWrong(false); }} />
-          <button type="submit" className="btn primary">{t('open')}</button>
-        </div>
-        {wrong && <p className="gentle" role="alert">{t('gateWrong')}</p>}
-      </form>
     </Modal>
   );
 }

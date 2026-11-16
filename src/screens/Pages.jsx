@@ -1,13 +1,13 @@
 // Screen 1 (Welcome), Screen 3 (Mission Center), Screen 7 (Achievements), Screen 8 (Parent Dashboard).
 import React, { useState } from 'react';
-import { Icon, Meter, TopBar } from '../components/ui.jsx';
+import { Icon, Meter, Modal, ParentGate, TopBar } from '../components/ui.jsx';
 import { CityMap } from '../art/CityMap.jsx';
 import { BuildingThumb } from '../art/BuildingArt.jsx';
-import { Pip } from '../art/Characters.jsx';
+import { KIDS, Kid, Pip } from '../art/Characters.jsx';
 import { BUILDINGS, BUILDINGS_BY_ID, TOTAL_BUILDINGS } from '../data/buildings.js';
 import { MISSIONS } from '../data/missions.js';
 import { LANGS, loc, sup } from '../data/i18n.js';
-import { levelOf, milestones, missionStatus, placedCount, placedMap } from '../state/store.js';
+import { MAX_PLAYERS, NICK_MAX, levelOf, milestones, missionStatus, newId, placedCount, placedMap } from '../state/store.js';
 
 const Sup = ({ text, lang }) => (text ? <p className="sup" lang={lang}>{text}</p> : null);
 
@@ -17,9 +17,54 @@ const DEMO_PLOTS = {
 };
 
 // ---------- Screen 1 ----------
-export function Welcome({ state, dispatch, t, lang, go }) {
-  const [mode, setMode] = useState(state.mode);
-  const begin = () => { dispatch({ type: 'START', lang, mode }); go('city'); };
+const AVATARS = Object.keys(KIDS);
+
+function NewPlayer({ t, canCancel, onCancel, onCreate }) {
+  const [nick, setNick] = useState('');
+  const [avatar, setAvatar] = useState(AVATARS[0]);
+  const [mode, setMode] = useState('little');
+  const submit = (e) => { e.preventDefault(); onCreate({ nick, avatar, mode }); };
+  return (
+    <form className="newplayer" onSubmit={submit}>
+      <div className="field">
+        <label htmlFor="nick-input">{t('nickname')}</label>
+        <input id="nick-input" type="text" value={nick} maxLength={NICK_MAX} placeholder={t('nickHint')}
+          autoComplete="off" autoCapitalize="words" spellCheck="false" onChange={(e) => setNick(e.target.value)} />
+        <p className="fine left">{t('nickNote')}</p>
+      </div>
+      <fieldset className="pick">
+        <legend>{t('pickAvatar')}</legend>
+        <div className="avatars">
+          {AVATARS.map((id) => (
+            <button type="button" key={id} className={id === avatar ? 'avatar on' : 'avatar'} aria-pressed={id === avatar} onClick={() => setAvatar(id)}><Kid id={id} size={56} /></button>
+          ))}
+        </div>
+      </fieldset>
+      <fieldset className="pick">
+        <legend>{t('chooseAge')}</legend>
+        <div className="ages">
+          {['little', 'junior'].map((m) => (
+            <button type="button" key={m} className={m === mode ? `agecard ${m} on` : `agecard ${m}`} aria-pressed={m === mode} onClick={() => setMode(m)}>
+              <b>{t(m)}</b>
+              <span className="agetag">{t(m + 'Age')}</span>
+              <small>{t(m + 'Desc')}</small>
+            </button>
+          ))}
+        </div>
+      </fieldset>
+      <button type="submit" className="btn primary big wide"><Icon name="hammer" />{t('start')}</button>
+      {canCancel && <button type="button" className="btn wide" onClick={onCancel}>{t('cancel')}</button>}
+    </form>
+  );
+}
+
+export function Welcome({ profiles, activeId, dispatch, t, lang, go }) {
+  const [creating, setCreating] = useState(false);
+  const [del, setDel] = useState(null); // { id, ok }: ok turns true once the grown-up check is passed
+  const showForm = creating || profiles.length === 0;
+  const target = del && profiles.find((p) => p.id === del.id);
+  const play = (id) => { dispatch({ type: 'PROFILE_SELECT', id }); go('city'); };
+  const create = (v) => { dispatch({ type: 'PROFILE_ADD', id: newId(), now: Date.now(), ...v }); setCreating(false); go('city'); };
   return (
     <div className="screen welcome">
       <div className="welcome-art"><CityMap plots={DEMO_PLOTS} demo title="Little City Makers" /></div>
@@ -41,21 +86,45 @@ export function Welcome({ state, dispatch, t, lang, go }) {
           </div>
         </fieldset>
 
-        <fieldset className="pick">
-          <legend>{t('chooseAge')}</legend>
-          <div className="ages">
-            {['little', 'junior'].map((m) => (
-              <button type="button" key={m} className={m === mode ? `agecard ${m} on` : `agecard ${m}`} aria-pressed={m === mode} onClick={() => setMode(m)}>
-                <b>{t(m)}</b>
-                <span className="agetag">{t(m + 'Age')}</span>
-                <small>{t(m + 'Desc')}</small>
-              </button>
-            ))}
-          </div>
-        </fieldset>
-
-        <button type="button" className="btn primary big wide" onClick={begin}><Icon name="hammer" />{state.started ? t('continue') : t('start')}</button>
+        {showForm ? (
+          <NewPlayer t={t} canCancel={profiles.length > 0} onCancel={() => setCreating(false)} onCreate={create} />
+        ) : (
+          <>
+            <fieldset className="pick">
+              <legend>{t('whoPlays')}</legend>
+              <ul className="players">
+                {profiles.map((p) => (
+                  <li key={p.id} className="player">
+                    <button type="button" className={p.id === activeId ? 'playerbtn last' : 'playerbtn'} onClick={() => play(p.id)}>
+                      <Kid id={p.avatar} size={52} />
+                      <span>
+                        <b>{p.nick}</b>
+                        <small>{t('buildingsCount', { n: placedCount(p.game), total: TOTAL_BUILDINGS })} · {t(p.game.mode)}{p.id === activeId ? ` · ${t('lastPlayed')}` : ''}</small>
+                      </span>
+                    </button>
+                    <button type="button" className="round" onClick={() => setDel({ id: p.id, ok: false })} aria-label={t('removePlayer', { name: p.nick })}><Icon name="trash" size={20} /></button>
+                  </li>
+                ))}
+              </ul>
+            </fieldset>
+            {profiles.length < MAX_PLAYERS
+              ? <button type="button" className="btn big wide" onClick={() => setCreating(true)}><Icon name="plus" />{t('newPlayer')}</button>
+              : <p className="fine">{t('playersFull')}</p>}
+            <p className="fine">{t('keepNote')}</p>
+          </>
+        )}
         <p className="fine">{t('privacy')}</p>
+
+        {target && !del.ok && <ParentGate t={t} onClose={() => setDel(null)} onPass={() => setDel({ id: del.id, ok: true })} />}
+        {target && del.ok && (
+          <Modal title={t('removePlayer', { name: target.nick })} onClose={() => setDel(null)} closeLabel={t('close')}>
+            <p>{t('removeAsk', { name: target.nick })}</p>
+            <div className="row">
+              <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'PROFILE_DELETE', id: del.id }); setDel(null); }}>{t('removeYes')}</button>
+              <button type="button" className="btn" onClick={() => setDel(null)}>{t('cancel')}</button>
+            </div>
+          </Modal>
+        )}
       </main>
     </div>
   );
@@ -187,7 +256,7 @@ function SkillRows({ keys, skills, t }) {
   );
 }
 
-export function Parent({ state, dispatch, t, lang, go, saved }) {
+export function Parent({ state, dispatch, t, lang, go, saved, player }) {
   const [ask, setAsk] = useState(false);
   const done = MISSIONS.filter((m) => state.missions[m.id]);
   const words = [...new Map(done.flatMap((m) => m.vocab).map((w) => [w.w, w])).values()];
@@ -197,7 +266,7 @@ export function Parent({ state, dispatch, t, lang, go, saved }) {
       <TopBar title={t('parentTitle')} onBack={() => go('city')} backLabel={t('city')} />
       <main className="page">
         <section className="sheet">
-          <h2>{t('overview')}</h2>
+          <h2>{t('overview')}{player ? ` · ${player.nick}` : ''}</h2>
           <div className="stats">
             <div><b>{done.length}/{MISSIONS.length}</b><span>{t('missionsDone')}</span></div>
             <div><b>{n}/{TOTAL_BUILDINGS}</b><span>{t('cityGrowth')}: {t('lv' + levelOf(n))}</span></div>
@@ -245,7 +314,7 @@ export function Parent({ state, dispatch, t, lang, go, saved }) {
             <div className="confirm" role="alertdialog" aria-label={t('reset')}>
               <p>{t('resetAsk')}</p>
               <div className="row">
-                <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'RESET' }); go('welcome'); }}>{t('resetYes')}</button>
+                <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'RESET' }); go('city'); }}>{t('resetYes')}</button>
                 <button type="button" className="btn" onClick={() => setAsk(false)}>{t('cancel')}</button>
               </div>
             </div>

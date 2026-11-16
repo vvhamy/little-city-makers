@@ -19,14 +19,27 @@
     start: s("Start Building", "B\u1EAFt \u0111\u1EA7u x\xE2y", "\uB3C4\uC2DC \uB9CC\uB4E4\uAE30 \uC2DC\uC791"),
     continue: s("Continue my city", "Ti\u1EBFp t\u1EE5c th\xE0nh ph\u1ED1 c\u1EE7a m\xECnh", "\uB0B4 \uB3C4\uC2DC \uC774\uC5B4\uC11C \uD558\uAE30"),
     chooseLang: s("Language", "Ng\xF4n ng\u1EEF", "\uC5B8\uC5B4"),
-    chooseAge: s("Who is playing?", "Ai \u0111ang ch\u01A1i?", "\uB204\uAC00 \uD50C\uB808\uC774\uD558\uB098\uC694?"),
+    chooseAge: s("Pick your mode", "Ch\u1ECDn ch\u1EBF \u0111\u1ED9 ch\u01A1i", "\uBAA8\uB4DC \uACE0\uB974\uAE30"),
     little: s("Little Makers", "Little Makers", "Little Makers"),
     littleAge: s("Ages 4\u20136", "4\u20136 tu\u1ED5i", "4\u20136\uC138"),
     littleDesc: s("Pictures, sounds and short games", "H\xECnh \u1EA3nh, \xE2m thanh v\xE0 tr\xF2 ch\u01A1i ng\u1EAFn", "\uADF8\uB9BC, \uC18C\uB9AC, \uC9E7\uC740 \uB180\uC774"),
     junior: s("Junior Makers", "Junior Makers", "Junior Makers"),
     juniorAge: s("Ages 7\u201310", "7\u201310 tu\u1ED5i", "7\u201310\uC138"),
     juniorDesc: s("Sentences, reading and bigger missions", "\u0110\u1EB7t c\xE2u, b\xE0i \u0111\u1ECDc v\xE0 nhi\u1EC7m v\u1EE5 l\u1EDBn h\u01A1n", "\uBB38\uC7A5, \uC77D\uAE30, \uB354 \uD070 \uBBF8\uC158"),
-    privacy: s("No names. No accounts. Progress stays in this browser.", "Kh\xF4ng c\u1EA7n t\xEAn. Kh\xF4ng c\u1EA7n t\xE0i kho\u1EA3n. Ti\u1EBFn \u0111\u1ED9 ch\u1EC9 l\u01B0u tr\xEAn tr\xECnh duy\u1EC7t n\xE0y.", "\uC774\uB984\uB3C4 \uACC4\uC815\uB3C4 \uD544\uC694 \uC5C6\uC5B4\uC694. \uC9C4\uD589 \uC0C1\uD669\uC740 \uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uB9CC \uC800\uC7A5\uB3FC\uC694."),
+    privacy: s("Just a nickname. No accounts. Progress stays in this browser.", "Ch\u1EC9 c\u1EA7n bi\u1EC7t danh. Kh\xF4ng c\u1EA7n t\xE0i kho\u1EA3n. Ti\u1EBFn \u0111\u1ED9 ch\u1EC9 l\u01B0u tr\xEAn tr\xECnh duy\u1EC7t n\xE0y.", "\uBCC4\uBA85\uB9CC \uC788\uC73C\uBA74 \uB3FC\uC694. \uACC4\uC815\uC740 \uD544\uC694 \uC5C6\uC5B4\uC694. \uC9C4\uD589 \uC0C1\uD669\uC740 \uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uB9CC \uC800\uC7A5\uB3FC\uC694."),
+    whoPlays: s("Who is playing?", "Ai \u0111ang ch\u01A1i?", "\uB204\uAC00 \uD50C\uB808\uC774\uD558\uB098\uC694?"),
+    newPlayer: s("New player", "Ng\u01B0\u1EDDi ch\u01A1i m\u1EDBi", "\uC0C8 \uD50C\uB808\uC774\uC5B4"),
+    nickname: s("Nickname", "Bi\u1EC7t danh", "\uBCC4\uBA85"),
+    nickHint: s("A fun name", "M\u1ED9t c\xE1i t\xEAn vui", "\uC7AC\uBBF8\uC788\uB294 \uC774\uB984"),
+    nickNote: s("Use a nickname, not your real name. Please do not type your school, address or phone number.", "H\xE3y d\xF9ng bi\u1EC7t danh, kh\xF4ng d\xF9ng t\xEAn th\u1EADt. \u0110\u1EEBng nh\u1EADp t\xEAn tr\u01B0\u1EDDng, \u0111\u1ECBa ch\u1EC9 hay s\u1ED1 \u0111i\u1EC7n tho\u1EA1i.", "\uC9C4\uC9DC \uC774\uB984 \uB300\uC2E0 \uBCC4\uBA85\uC744 \uC368 \uC8FC\uC138\uC694. \uD559\uAD50, \uC8FC\uC18C, \uC804\uD654\uBC88\uD638\uB294 \uC801\uC9C0 \uB9C8\uC138\uC694."),
+    pickAvatar: s("Pick a picture", "Ch\u1ECDn m\u1ED9t h\xECnh \u0111\u1EA1i di\u1EC7n", "\uADF8\uB9BC \uACE0\uB974\uAE30"),
+    keepNote: s("Other players stay saved on this device.", "Nh\u1EEFng ng\u01B0\u1EDDi ch\u01A1i kh\xE1c v\u1EABn \u0111\u01B0\u1EE3c l\u01B0u tr\xEAn thi\u1EBFt b\u1ECB n\xE0y.", "\uB2E4\uB978 \uD50C\uB808\uC774\uC5B4\uB294 \uC774 \uAE30\uAE30\uC5D0 \uADF8\uB300\uB85C \uC800\uC7A5\uB3FC\uC694."),
+    playersFull: s("This device has 8 players. A grown-up can remove one to make space.", "Thi\u1EBFt b\u1ECB n\xE0y \u0111\xE3 c\xF3 8 ng\u01B0\u1EDDi ch\u01A1i. Ng\u01B0\u1EDDi l\u1EDBn c\xF3 th\u1EC3 x\xF3a b\u1EDBt m\u1ED9t ng\u01B0\u1EDDi \u0111\u1EC3 c\xF3 ch\u1ED7.", "\uC774 \uAE30\uAE30\uC5D0 \uD50C\uB808\uC774\uC5B4\uAC00 8\uBA85 \uC788\uC5B4\uC694. \uBCF4\uD638\uC790\uAC00 \uD55C \uBA85\uC744 \uC9C0\uC6B0\uBA74 \uC790\uB9AC\uAC00 \uC0DD\uACA8\uC694."),
+    removePlayer: s("Remove {name}", "X\xF3a {name}", "{name} \uC9C0\uC6B0\uAE30"),
+    removeAsk: s("Delete {name} and the whole city? This cannot be undone.", "X\xF3a {name} v\xE0 to\xE0n b\u1ED9 th\xE0nh ph\u1ED1? Kh\xF4ng th\u1EC3 ho\xE0n t\xE1c.", "{name}\uC758 \uB3C4\uC2DC\uC640 \uC9C4\uD589 \uC0C1\uD669\uC744 \uBAA8\uB450 \uC9C0\uC6B8\uAE4C\uC694? \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC5B4\uC694."),
+    removeYes: s("Yes, delete", "C\xF3, x\xF3a", "\uB124, \uC9C0\uC6B8\uAC8C\uC694"),
+    switchPlayer: s("Switch player", "\u0110\u1ED5i ng\u01B0\u1EDDi ch\u01A1i", "\uD50C\uB808\uC774\uC5B4 \uBC14\uAFB8\uAE30"),
+    lastPlayed: s("Last played", "Ch\u01A1i g\u1EA7n nh\u1EA5t", "\uAC00\uC7A5 \uCD5C\uADFC"),
     missions: s("Missions", "Nhi\u1EC7m v\u1EE5", "\uBBF8\uC158"),
     build: s("Build", "X\xE2y d\u1EF1ng", "\uC9D3\uAE30"),
     myCity: s("My City", "Th\xE0nh ph\u1ED1 c\u1EE7a m\xECnh", "\uB0B4 \uB3C4\uC2DC"),
@@ -132,7 +145,7 @@
     ms_culture: s("Culture Explorer", "Nh\xE0 kh\xE1m ph\xE1 v\u0103n h\xF3a", "\uBB38\uD654 \uD0D0\uD5D8\uAC00"),
     ms_helper: s("Community Helper", "Ng\u01B0\u1EDDi gi\xFAp c\u1ED9ng \u0111\u1ED3ng", "\uB9C8\uC744 \uB3C4\uC6B0\uBBF8"),
     ms_town: s("Town Maker (5 buildings)", "Ng\u01B0\u1EDDi x\xE2y th\u1ECB tr\u1EA5n (5 c\xF4ng tr\xECnh)", "\uB3D9\uB124 \uAC74\uCD95\uAC00 (\uAC74\uBB3C 5\uAC1C)"),
-    ms_cityMaker: s("City Maker (10 buildings)", "Ng\u01B0\u1EDDi ki\u1EBFn t\u1EA1o th\xE0nh ph\u1ED1 (10 c\xF4ng tr\xECnh)", "\uB3C4\uC2DC \uAC74\uCD95\uAC00 (\uAC74\uBB3C 10\uAC1C)"),
+    ms_cityMaker: s("City Maker (11 buildings)", "Ng\u01B0\u1EDDi ki\u1EBFn t\u1EA1o th\xE0nh ph\u1ED1 (11 c\xF4ng tr\xECnh)", "\uB3C4\uC2DC \uAC74\uCD95\uAC00 (\uAC74\uBB3C 11\uAC1C)"),
     parentTitle: s("Parent Dashboard", "B\u1EA3ng theo d\xF5i d\xE0nh cho ph\u1EE5 huynh", "\uBCF4\uD638\uC790 \uB300\uC2DC\uBCF4\uB4DC"),
     gateQ: s("Grown-ups only. What is {a} \xD7 {b}?", "Ch\u1EC9 d\xE0nh cho ng\u01B0\u1EDDi l\u1EDBn. {a} \xD7 {b} b\u1EB1ng bao nhi\xEAu?", "\uBCF4\uD638\uC790 \uC804\uC6A9\uC785\uB2C8\uB2E4. {a} \xD7 {b}\uB294 \uC5BC\uB9C8\uC778\uAC00\uC694?"),
     gateWrong: s("That is not right. Please try again.", "Ch\u01B0a \u0111\xFAng. Vui l\xF2ng th\u1EED l\u1EA1i.", "\uD2C0\uB838\uC5B4\uC694. \uB2E4\uC2DC \uC2DC\uB3C4\uD574 \uC8FC\uC138\uC694."),
@@ -149,10 +162,10 @@
     aboutData: s("Safety and data", "An to\xE0n v\xE0 d\u1EEF li\u1EC7u", "\uC548\uC804\uACFC \uB370\uC774\uD130"),
     savedOk: s("Progress is saved in this browser only. Nothing is sent anywhere.", "Ti\u1EBFn \u0111\u1ED9 ch\u1EC9 \u0111\u01B0\u1EE3c l\u01B0u tr\xEAn tr\xECnh duy\u1EC7t n\xE0y. Kh\xF4ng c\xF3 d\u1EEF li\u1EC7u n\xE0o \u0111\u01B0\u1EE3c g\u1EEDi \u0111i.", "\uC9C4\uD589 \uC0C1\uD669\uC740 \uC774 \uBE0C\uB77C\uC6B0\uC800\uC5D0\uB9CC \uC800\uC7A5\uB418\uBA70 \uC5B4\uB514\uC5D0\uB3C4 \uC804\uC1A1\uB418\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4."),
     savedNo: s("This browser is blocking storage, so progress will be lost when the page closes.", "Tr\xECnh duy\u1EC7t n\xE0y \u0111ang ch\u1EB7n l\u01B0u tr\u1EEF n\xEAn ti\u1EBFn \u0111\u1ED9 s\u1EBD m\u1EA5t khi \u0111\xF3ng trang.", "\uC774 \uBE0C\uB77C\uC6B0\uC800\uAC00 \uC800\uC7A5\uC744 \uCC28\uB2E8\uD558\uACE0 \uC788\uC5B4 \uD398\uC774\uC9C0\uB97C \uB2EB\uC73C\uBA74 \uC9C4\uD589 \uC0C1\uD669\uC774 \uC0AC\uB77C\uC9D1\uB2C8\uB2E4."),
-    noPersonal: s("The game never asks for a name, address, school or phone number. There is no leaderboard, no chat and nothing to buy.", "Tr\xF2 ch\u01A1i kh\xF4ng bao gi\u1EDD h\u1ECFi t\xEAn, \u0111\u1ECBa ch\u1EC9, tr\u01B0\u1EDDng h\u1ECDc hay s\u1ED1 \u0111i\u1EC7n tho\u1EA1i. Kh\xF4ng c\xF3 b\u1EA3ng x\u1EBFp h\u1EA1ng, kh\xF4ng tr\xF2 chuy\u1EC7n v\xE0 kh\xF4ng c\xF3 g\xEC \u0111\u1EC3 mua.", "\uC774 \uAC8C\uC784\uC740 \uC774\uB984, \uC8FC\uC18C, \uD559\uAD50, \uC804\uD654\uBC88\uD638\uB97C \uBB3B\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC21C\uC704\uD45C, \uCC44\uD305, \uAD6C\uB9E4 \uC694\uC18C\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."),
+    noPersonal: s("The game only asks for a nickname. It never asks for a real name, address, school or phone number. There is no leaderboard, no chat and nothing to buy.", "Tr\xF2 ch\u01A1i ch\u1EC9 h\u1ECFi bi\u1EC7t danh. Kh\xF4ng bao gi\u1EDD h\u1ECFi t\xEAn th\u1EADt, \u0111\u1ECBa ch\u1EC9, tr\u01B0\u1EDDng h\u1ECDc hay s\u1ED1 \u0111i\u1EC7n tho\u1EA1i. Kh\xF4ng c\xF3 b\u1EA3ng x\u1EBFp h\u1EA1ng, kh\xF4ng tr\xF2 chuy\u1EC7n v\xE0 kh\xF4ng c\xF3 g\xEC \u0111\u1EC3 mua.", "\uC774 \uAC8C\uC784\uC740 \uBCC4\uBA85\uB9CC \uBB3C\uC5B4\uBD05\uB2C8\uB2E4. \uC2E4\uBA85, \uC8FC\uC18C, \uD559\uAD50, \uC804\uD654\uBC88\uD638\uB294 \uBB3B\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC21C\uC704\uD45C, \uCC44\uD305, \uAD6C\uB9E4 \uC694\uC18C\uAC00 \uC5C6\uC2B5\uB2C8\uB2E4."),
     contentNote: s("All activities use fixed, pre-written content. No live AI talks with your child. Speaking steps are not recorded or checked. Audio uses your device's built-in voice.", "M\u1ECDi ho\u1EA1t \u0111\u1ED9ng d\xF9ng n\u1ED9i dung so\u1EA1n s\u1EB5n. Kh\xF4ng c\xF3 AI tr\xF2 chuy\u1EC7n tr\u1EF1c ti\u1EBFp v\u1EDBi tr\u1EBB. Ph\u1EA7n luy\u1EC7n n\xF3i kh\xF4ng \u0111\u01B0\u1EE3c ghi \xE2m hay ch\u1EA5m \u0111i\u1EC3m. \xC2m thanh d\xF9ng gi\u1ECDng \u0111\u1ECDc c\xF3 s\u1EB5n tr\xEAn thi\u1EBFt b\u1ECB.", "\uBAA8\uB4E0 \uD65C\uB3D9\uC740 \uBBF8\uB9AC \uC791\uC131\uB41C \uB0B4\uC6A9\uC744 \uC0AC\uC6A9\uD569\uB2C8\uB2E4. \uC544\uC774\uC640 \uC2E4\uC2DC\uAC04\uC73C\uB85C \uB300\uD654\uD558\uB294 AI\uB294 \uC5C6\uC2B5\uB2C8\uB2E4. \uB9D0\uD558\uAE30 \uB2E8\uACC4\uB294 \uB179\uC74C\uD558\uAC70\uB098 \uD3C9\uAC00\uD558\uC9C0 \uC54A\uC2B5\uB2C8\uB2E4. \uC74C\uC131\uC740 \uAE30\uAE30\uC758 \uAE30\uBCF8 \uC74C\uC131\uC744 \uC0AC\uC6A9\uD569\uB2C8\uB2E4."),
     reset: s("Reset progress", "X\xF3a ti\u1EBFn \u0111\u1ED9", "\uC9C4\uD589 \uC0C1\uD669 \uCD08\uAE30\uD654"),
-    resetAsk: s("Erase the city and all progress? This cannot be undone.", "X\xF3a th\xE0nh ph\u1ED1 v\xE0 to\xE0n b\u1ED9 ti\u1EBFn \u0111\u1ED9? Kh\xF4ng th\u1EC3 ho\xE0n t\xE1c.", "\uB3C4\uC2DC\uC640 \uBAA8\uB4E0 \uC9C4\uD589 \uC0C1\uD669\uC744 \uC9C0\uC6B8\uAE4C\uC694? \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC2B5\uB2C8\uB2E4."),
+    resetAsk: s("Erase this player\u2019s city and all progress? This cannot be undone.", "X\xF3a th\xE0nh ph\u1ED1 v\xE0 to\xE0n b\u1ED9 ti\u1EBFn \u0111\u1ED9 c\u1EE7a ng\u01B0\u1EDDi ch\u01A1i n\xE0y? Kh\xF4ng th\u1EC3 ho\xE0n t\xE1c.", "\uC774 \uD50C\uB808\uC774\uC5B4\uC758 \uB3C4\uC2DC\uC640 \uBAA8\uB4E0 \uC9C4\uD589 \uC0C1\uD669\uC744 \uC9C0\uC6B8\uAE4C\uC694? \uB418\uB3CC\uB9B4 \uC218 \uC5C6\uC5B4\uC694."),
     resetYes: s("Yes, erase", "C\xF3, x\xF3a", "\uB124, \uC9C0\uC6B8\uAC8C\uC694"),
     sk_listening: s("Listening", "Nghe", "\uB4E3\uAE30"),
     sk_speaking: s("Speaking", "N\xF3i", "\uB9D0\uD558\uAE30"),
@@ -205,6 +218,14 @@
       color: 1,
       name: s2("Bakery", "Ti\u1EC7m b\xE1nh", "\uBE75\uC9D1"),
       learn: s2("Food words and polite requests", "T\u1EEB v\u1EC1 \u0111\u1ED3 \u0103n v\xE0 l\u1EDDi \u0111\u1EC1 ngh\u1ECB l\u1ECBch s\u1EF1", "\uC74C\uC2DD \uB2E8\uC5B4\uC640 \uACF5\uC190\uD55C \uBD80\uD0C1")
+    },
+    {
+      id: "cafe",
+      cat: "shop",
+      mission: "m-cafe",
+      color: 2,
+      name: s2("Caf\xE9", "Qu\xE1n c\xE0 ph\xEA", "\uCE74\uD398"),
+      learn: s2("Food and drink words and ordering politely", "T\u1EEB v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 c\xE1ch g\u1ECDi m\xF3n l\u1ECBch s\u1EF1", "\uC74C\uC2DD\xB7\uC74C\uB8CC \uB2E8\uC5B4\uC640 \uACF5\uC190\uD558\uAC8C \uC8FC\uBB38\uD558\uAE30")
     },
     {
       id: "library",
@@ -355,6 +376,48 @@
           { t: "type", pic: "\u{1F36A}", pre: "I would like a", post: ", please.", a: "cookie" },
           { t: "pick", q: "Which sentence is polite?", h: h("C\xE2u n\xE0o l\u1ECBch s\u1EF1?", "\uC5B4\uB290 \uBB38\uC7A5\uC774 \uACF5\uC190\uD55C\uAC00\uC694?"), opts: ["I would like an apple, please.", "Give me an apple.", "Apple. Now."], a: "I would like an apple, please." },
           { t: "say", s: "I would like a cake, please. Thank you!" }
+        ]
+      }
+    },
+    {
+      id: "m-cafe",
+      building: "cafe",
+      pillar: "english",
+      age: "5\u20138",
+      needs: 1,
+      skills: ["polite"],
+      who: ["leo"],
+      title: s3("A Drink at the Caf\xE9", "M\u1ED9t ly n\u01B0\u1EDBc \u1EDF qu\xE1n c\xE0 ph\xEA", "\uCE74\uD398\uC5D0\uC11C \uB9C8\uC2E4 \uAC83 \uC8FC\uBB38\uD558\uAE30"),
+      objective: s3("Learn food and drink words and order with \u201CI would like\u2026\u201D.", "H\u1ECDc t\u1EEB v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 g\u1ECDi m\xF3n b\u1EB1ng \u201CI would like\u2026\u201D.", "\uC74C\uC2DD\uACFC \uC74C\uB8CC \uB2E8\uC5B4\uB97C \uBC30\uC6B0\uACE0 \u201CI would like\u2026\u201D\uB85C \uC8FC\uBB38\uD574\uC694."),
+      scenario: s3("Leo is thirsty. He walks into the caf\xE9 to order a drink.", "Leo \u0111ang kh\xE1t n\u01B0\u1EDBc. B\u1EA1n \u1EA5y b\u01B0\u1EDBc v\xE0o qu\xE1n \u0111\u1EC3 g\u1ECDi \u0111\u1ED3 u\u1ED1ng.", "\uB808\uC624\uB294 \uBAA9\uC774 \uB9D0\uB77C\uC694. \uB9C8\uC2E4 \uAC83\uC744 \uC8FC\uBB38\uD558\uB7EC \uCE74\uD398\uC5D0 \uB4E4\uC5B4\uAC00\uC694."),
+      lesson: s3("Saying \u201Cplease\u201D and \u201Cthank you\u201D helps people feel respected.", "N\xF3i \u201Cplease\u201D v\xE0 \u201Cthank you\u201D gi\xFAp m\u1ECDi ng\u01B0\u1EDDi c\u1EA3m th\u1EA5y \u0111\u01B0\u1EE3c t\xF4n tr\u1ECDng.", "\u201Cplease\u201D\uC640 \u201Cthank you\u201D\uB77C\uACE0 \uB9D0\uD558\uBA74 \uC11C\uB85C \uC874\uC911\uBC1B\uB294 \uB290\uB08C\uC774 \uB4E4\uC5B4\uC694."),
+      feedback: s3("Great ordering! You asked politely.", "G\u1ECDi m\xF3n gi\u1ECFi l\u1EAFm! B\u1EA1n \u0111\xE3 h\u1ECFi th\u1EADt l\u1ECBch s\u1EF1.", "\uC8FC\uBB38\uC744 \uC798\uD588\uC5B4\uC694! \uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD588\uC5B4\uC694."),
+      vocab: [v("juice", "\u{1F9C3}", "n\u01B0\u1EDBc \xE9p", "\uC8FC\uC2A4"), v("water", "\u{1F4A7}", "n\u01B0\u1EDBc", "\uBB3C"), v("sandwich", "\u{1F96A}", "b\xE1nh sandwich", "\uC0CC\uB4DC\uC704\uCE58"), v("soup", "\u{1F372}", "m\xF3n s\xFAp", "\uC218\uD504"), v("banana", "\u{1F34C}", "qu\u1EA3 chu\u1ED1i", "\uBC14\uB098\uB098")],
+      target: "I would like some juice, please.",
+      targetHelp: h("Cho m\xECnh m\u1ED9t \xEDt n\u01B0\u1EDBc \xE9p \u1EA1.", "\uC8FC\uC2A4 \uC880 \uC8FC\uC138\uC694."),
+      steps: {
+        little: [
+          { t: "pick", q: "Leo is thirsty. Tap the juice.", h: h("Leo \u0111ang kh\xE1t. H\xE3y ch\u1EA1m v\xE0o n\u01B0\u1EDBc \xE9p.", "\uB808\uC624\uB294 \uBAA9\uC774 \uB9D0\uB77C\uC694. \uC8FC\uC2A4\uB97C \uB20C\uB7EC\uC694."), opts: ["juice", "soup", "banana"], a: "juice" },
+          { t: "pick", q: "Now Leo is hungry. Tap the sandwich.", h: h("B\xE2y gi\u1EDD Leo \u0111\xF3i b\u1EE5ng. H\xE3y ch\u1EA1m v\xE0o b\xE1nh sandwich.", "\uC774\uBC88\uC5D0\uB294 \uB808\uC624\uAC00 \uBC30\uACE0\uD30C\uC694. \uC0CC\uB4DC\uC704\uCE58\uB97C \uB20C\uB7EC\uC694."), opts: ["water", "sandwich", "juice"], a: "sandwich" },
+          { t: "order", q: "Ask politely.", h: h("H\xE3y h\u1ECFi th\u1EADt l\u1ECBch s\u1EF1.", "\uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD574\uC694."), words: ["I would like", "some juice,", "please."] },
+          { t: "say", s: "I would like some juice, please." }
+        ],
+        junior: [
+          { t: "pick", q: "Leo says, \u201CI would like some soup, please.\u201D What does he want?", h: h("Leo mu\u1ED1n g\u1ECDi g\xEC?", "\uB808\uC624\uB294 \uBB34\uC5C7\uC744 \uC6D0\uD558\uB098\uC694?"), opts: ["soup", "water", "banana"], a: "soup" },
+          { t: "order", q: "Build the polite sentence.", h: h("S\u1EAFp x\u1EBFp th\xE0nh c\xE2u l\u1ECBch s\u1EF1.", "\uACF5\uC190\uD55C \uBB38\uC7A5\uC744 \uB9CC\uB4E4\uC5B4\uC694."), words: ["I", "would", "like", "some", "juice,", "please."] },
+          { t: "type", pic: "\u{1F96A}", pre: "I would like a", post: ", please.", a: "sandwich" },
+          {
+            t: "choice",
+            who: ["leo"],
+            story: s3("Leo is at the caf\xE9 counter. He wants some water. What can he say?", "Leo \u0111ang \u1EDF qu\u1EA7y c\u1EE7a qu\xE1n. B\u1EA1n \u1EA5y mu\u1ED1n u\u1ED1ng n\u01B0\u1EDBc. B\u1EA1n \u1EA5y c\xF3 th\u1EC3 n\xF3i g\xEC?", "\uB808\uC624\uAC00 \uCE74\uD398 \uCE74\uC6B4\uD130\uC5D0 \uC788\uC5B4\uC694. \uBB3C\uC744 \uB9C8\uC2DC\uACE0 \uC2F6\uC5B4\uC694. \uBB50\uB77C\uACE0 \uB9D0\uD560 \uC218 \uC788\uC744\uAE4C\uC694?"),
+            opts: [
+              { l: "I would like some water, please.", good: true, out: s3("The server smiles and brings the water. \u201CHere you are!\u201D", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 m\u1EC9m c\u01B0\u1EDDi v\xE0 mang n\u01B0\u1EDBc ra. \u201CC\u1EE7a b\u1EA1n \u0111\xE2y!\u201D", "\uC9C1\uC6D0\uC774 \uC6C3\uC73C\uBA70 \uBB3C\uC744 \uAC00\uC838\uB2E4\uC918\uC694. \u201C\uC5EC\uAE30 \uC788\uC5B4\uC694!\u201D") },
+              { l: "Give me water. Now!", good: false, out: s3("The server feels unhappy because the words are not kind. Let\u2019s try another idea.", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 th\u1EA5y kh\xF4ng vui v\xEC l\u1EDDi n\xF3i ch\u01B0a nh\u1EB9 nh\xE0ng. M\xECnh th\u1EED \xFD kh\xE1c nh\xE9.", "\uB9D0\uC774 \uB2E4\uC815\uD558\uC9C0 \uC54A\uC544\uC11C \uC9C1\uC6D0\uC774 \uC18D\uC0C1\uD574\uC694. \uB2E4\uB978 \uBC29\uBC95\uC744 \uC0DD\uAC01\uD574 \uBD10\uC694.") },
+              { l: "Can I have some water, please?", good: true, out: s3("\u201COf course!\u201D says the server. Asking nicely works.", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 n\xF3i: \u201CT\u1EA5t nhi\xEAn r\u1ED3i!\u201D H\u1ECFi nh\u1EB9 nh\xE0ng th\u1EADt hi\u1EC7u qu\u1EA3.", "\uC9C1\uC6D0\uC774 \uB9D0\uD574\uC694. \u201C\uBB3C\uB860\uC774\uC8E0!\u201D \uB2E4\uC815\uD558\uAC8C \uBD80\uD0C1\uD558\uB2C8 \uD1B5\uD588\uC5B4\uC694.") }
+            ]
+          },
+          { t: "pick", q: "The server gives Leo his water. What can Leo say?", h: h("Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 \u0111\u01B0a n\u01B0\u1EDBc cho Leo. Leo c\xF3 th\u1EC3 n\xF3i g\xEC?", "\uC9C1\uC6D0\uC774 \uB808\uC624\uC5D0\uAC8C \uBB3C\uC744 \uC918\uC694. \uB808\uC624\uB294 \uBB50\uB77C\uACE0 \uB9D0\uD560\uAE4C\uC694?"), opts: ["Thank you!", "Give me more.", "I do not like it."], a: "Thank you!" },
+          { t: "say", s: "I would like some juice, please. Thank you!" }
         ]
       }
     },
@@ -760,12 +823,12 @@
   var MISSIONS_BY_ID = Object.fromEntries(MISSIONS.map((m) => [m.id, m]));
 
   // src/state/store.js
-  var KEY = "little-city-makers.v1";
-  var fresh = () => ({
-    v: 1,
-    started: false,
-    lang: "en",
-    mode: "little",
+  var KEY = "little-city-makers.v2";
+  var OLD_KEY = "little-city-makers.v1";
+  var MAX_PLAYERS = 8;
+  var NICK_MAX = 14;
+  var fresh = (mode = "little") => ({
+    mode,
     // 'little' (4–6) | 'junior' (7–10)
     missions: {},
     // missionId -> { plays }
@@ -776,23 +839,47 @@
     skills: {}
     // skillKey -> activities completed
   });
+  var freshRoot = () => ({ v: 2, lang: "en", active: null, profiles: [] });
+  var newId = () => "p" + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+  var cleanNick = (s4) => String(s4 || "").replace(/[\u0000-\u001f]/g, "").replace(/\s+/g, " ").trim().slice(0, NICK_MAX);
   function load() {
     try {
       const raw = localStorage.getItem(KEY);
       if (raw) {
-        const s4 = JSON.parse(raw);
-        if (s4 && s4.v === 1) return { state: { ...fresh(), ...s4 }, ok: true };
+        const r = JSON.parse(raw);
+        if (r && r.v === 2 && Array.isArray(r.profiles)) {
+          const profiles = r.profiles.map((p) => ({ ...p, game: { ...fresh(), ...p.game } }));
+          const active = profiles.some((p) => p.id === r.active) ? r.active : null;
+          return { root: { ...freshRoot(), ...r, profiles, active }, ok: true };
+        }
+      }
+      const root2 = freshRoot();
+      const old = localStorage.getItem(OLD_KEY);
+      if (old) {
+        const s4 = JSON.parse(old);
+        if (s4 && s4.v === 1 && (s4.started || Object.keys(s4.missions || {}).length)) {
+          const id = newId();
+          root2.lang = s4.lang || "en";
+          root2.active = id;
+          root2.profiles = [{
+            id,
+            nick: "Player 1",
+            avatar: "mai",
+            created: Date.now(),
+            game: { ...fresh(s4.mode), missions: s4.missions || {}, plots: s4.plots || {}, practice: s4.practice || {}, skills: s4.skills || {} }
+          }];
+        }
       }
       localStorage.setItem(KEY + ".probe", "1");
       localStorage.removeItem(KEY + ".probe");
-      return { state: fresh(), ok: true };
+      return { root: root2, ok: true };
     } catch {
-      return { state: fresh(), ok: false };
+      return { root: freshRoot(), ok: false };
     }
   }
-  function save(state) {
+  function save(root2) {
     try {
-      localStorage.setItem(KEY, JSON.stringify(state));
+      localStorage.setItem(KEY, JSON.stringify(root2));
       return true;
     } catch {
       return false;
@@ -803,12 +890,8 @@
     for (const k in b) out[k] = (out[k] || 0) + b[k];
     return out;
   };
-  function reducer(s4, a) {
+  function gameReducer(s4, a) {
     switch (a.type) {
-      case "START":
-        return { ...s4, started: true, lang: a.lang, mode: a.mode };
-      case "LANG":
-        return { ...s4, lang: a.lang };
       case "MODE":
         return { ...s4, mode: a.mode };
       case "MISSION_DONE":
@@ -829,9 +912,28 @@
         if (!s4.plots[a.plot]) return s4;
         return { ...s4, plots: { ...s4.plots, [a.plot]: { ...s4.plots[a.plot], ...a.patch } } };
       case "RESET":
-        return { ...fresh(), lang: s4.lang };
+        return fresh(s4.mode);
       default:
         return s4;
+    }
+  }
+  function rootReducer(r, a) {
+    switch (a.type) {
+      case "LANG":
+        return { ...r, lang: a.lang };
+      case "PROFILE_ADD": {
+        if (r.profiles.length >= MAX_PLAYERS) return r;
+        const nick = cleanNick(a.nick) || `Maker ${r.profiles.length + 1}`;
+        const p = { id: a.id, nick, avatar: a.avatar, created: a.now, game: fresh(a.mode) };
+        return { ...r, active: p.id, profiles: [...r.profiles, p] };
+      }
+      case "PROFILE_SELECT":
+        return r.profiles.some((p) => p.id === a.id) ? { ...r, active: a.id } : r;
+      case "PROFILE_DELETE":
+        return { ...r, profiles: r.profiles.filter((p) => p.id !== a.id), active: r.active === a.id ? null : r.active };
+      default:
+        if (!r.active) return r;
+        return { ...r, profiles: r.profiles.map((p) => p.id === r.active ? { ...p, game: gameReducer(p.game, a) } : p) };
     }
   }
   var placedMap = (s4) => Object.fromEntries(Object.entries(s4.plots).map(([plot, v2]) => [v2.b, plot]));
@@ -877,7 +979,9 @@
     brush: "M5 19c2.5 0 4-1 4-3l9-9-3-3-9 9c-2 0-1 3-1 6z",
     play: "M8 5l11 7-11 7z",
     mic: "M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v3",
-    next: "M9 5l7 7-7 7"
+    next: "M9 5l7 7-7 7",
+    plus: "M12 5v14M5 12h14",
+    trash: "M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13M10 11v6M14 11v6"
   };
   function Icon({ name, size = 22 }) {
     return /* @__PURE__ */ react_default.createElement("svg", { className: "icon", viewBox: "0 0 24 24", width: size, height: size, fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("path", { d: PATHS[name] }));
@@ -925,6 +1029,20 @@
     }
     return a;
   };
+  function ParentGate({ t, onClose, onPass }) {
+    const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
+    const [val, setVal] = useState("");
+    const [wrong, setWrong] = useState(false);
+    const submit = (e) => {
+      e.preventDefault();
+      if (Number(val) === q.a * q.b) onPass();
+      else setWrong(true);
+    };
+    return /* @__PURE__ */ react_default.createElement(Modal, { title: t("grownups"), onClose, closeLabel: t("close") }, /* @__PURE__ */ react_default.createElement("form", { className: "gate", onSubmit: submit }, /* @__PURE__ */ react_default.createElement("label", { htmlFor: "gate-answer" }, t("gateQ", q)), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("input", { id: "gate-answer", type: "text", inputMode: "numeric", autoComplete: "off", autoFocus: true, value: val, onChange: (e) => {
+      setVal(e.target.value);
+      setWrong(false);
+    } }), /* @__PURE__ */ react_default.createElement("button", { type: "submit", className: "btn primary" }, t("open"))), wrong && /* @__PURE__ */ react_default.createElement("p", { className: "gentle", role: "alert" }, t("gateWrong"))));
+  }
 
   // src/art/iso.js
   var A = 60;
@@ -989,6 +1107,10 @@
     bakery: (c) => {
       const f = [0.2, 0.25, 0.9, 0.85];
       return /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement(Box, { f, h: 42, c }), /* @__PURE__ */ react_default.createElement(Face, { side: "L", f }, /* @__PURE__ */ react_default.createElement(Door, { u: 50 }), /* @__PURE__ */ react_default.createElement("rect", { x: "8", y: "5", width: "34", height: "18", rx: "2", fill: TRIM }), /* @__PURE__ */ react_default.createElement("rect", { x: "10", y: "7", width: "30", height: "14", fill: WIN }), [0, 1, 2, 3, 4, 5, 6].map((k) => /* @__PURE__ */ react_default.createElement("rect", { key: k, x: k * 10, y: "27", width: "10", height: "9", fill: k % 2 ? TRIM : ROOF_CORAL }))), /* @__PURE__ */ react_default.createElement(Face, { side: "R", f }, /* @__PURE__ */ react_default.createElement(Win, { u: 23, v: 12 })), /* @__PURE__ */ react_default.createElement(Box, { f: [0.3, 0.35, 0.8, 0.75], z: 42, h: 5, c: shade(c, 0.35) }), /* @__PURE__ */ react_default.createElement(Sign, { at: [0.9, 0.85, 42], e: "\u{1F950}" }));
+    },
+    cafe: (c) => {
+      const f = [0.2, 0.25, 0.9, 0.85];
+      return /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement(Box, { f, h: 38, c }), /* @__PURE__ */ react_default.createElement(Face, { side: "L", f }, /* @__PURE__ */ react_default.createElement(Door, { u: 52 }), /* @__PURE__ */ react_default.createElement("rect", { x: "6", y: "5", width: "38", height: "20", rx: "2", fill: TRIM }), /* @__PURE__ */ react_default.createElement("rect", { x: "8", y: "7", width: "34", height: "16", fill: WIN }), [0, 1, 2, 3, 4, 5, 6].map((k) => /* @__PURE__ */ react_default.createElement("rect", { key: k, x: k * 10, y: "28", width: "10", height: "8", fill: k % 2 ? TRIM : "#6FB5E8" }))), /* @__PURE__ */ react_default.createElement(Face, { side: "R", f }, /* @__PURE__ */ react_default.createElement(Win, { u: 23, v: 12 })), /* @__PURE__ */ react_default.createElement(Box, { f: [0.3, 0.35, 0.8, 0.75], z: 38, h: 5, c: shade(c, 0.35) }), /* @__PURE__ */ react_default.createElement(Sign, { at: [0.9, 0.85, 38], e: "\u2615" }));
     },
     library: (c) => {
       const f = [0.15, 0.2, 0.95, 0.9];
@@ -1190,7 +1312,7 @@
 
   // src/screens/City.jsx
   var BUILD_MS = 1700;
-  function City({ state, dispatch, t, lang, go, initialBuild, onPractice }) {
+  function City({ state, dispatch, t, lang, go, player, initialBuild, onPractice }) {
     const placed = placedMap(state);
     const n = placedCount(state);
     const permits = permitsOf(state);
@@ -1272,7 +1394,7 @@
     const level = levelOf(n);
     const selected = mode?.type === "build" && mode.b ? BUILDINGS_BY_ID[mode.b] : null;
     const openCount = MISSIONS.filter((m) => missionStatus(state, m) === "open").length;
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen cityscreen" }, /* @__PURE__ */ react_default.createElement("header", { className: "hud" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "brand", onClick: () => go("welcome"), "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "brandmark", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null)), /* @__PURE__ */ react_default.createElement("span", { className: "brandname" }, "Little City Makers")), /* @__PURE__ */ react_default.createElement("div", { className: "levelbox" }, /* @__PURE__ */ react_default.createElement("b", null, t("lv" + level)), /* @__PURE__ */ react_default.createElement(Meter, { value: n, max: TOTAL_BUILDINGS, label: t("cityGrowth") }), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n, total: TOTAL_BUILDINGS }))), /* @__PURE__ */ react_default.createElement(LangSelect, { lang, onChange: (l) => dispatch({ type: "LANG", lang: l }), label: t("chooseLang") }), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: () => setGate(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "people", size: 18 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, t("grownups")))), /* @__PURE__ */ react_default.createElement("div", { className: "mapwrap" }, /* @__PURE__ */ react_default.createElement(
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen cityscreen" }, /* @__PURE__ */ react_default.createElement("header", { className: "hud" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "brand", onClick: () => go("welcome"), "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "brandmark", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null)), /* @__PURE__ */ react_default.createElement("span", { className: "brandname" }, "Little City Makers")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small player-chip", onClick: () => go("welcome"), "aria-label": `${t("switchPlayer")}: ${player?.nick || ""}` }, player && /* @__PURE__ */ react_default.createElement(Kid, { id: player.avatar, size: 30 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, player?.nick)), /* @__PURE__ */ react_default.createElement("div", { className: "levelbox" }, /* @__PURE__ */ react_default.createElement("b", null, t("lv" + level)), /* @__PURE__ */ react_default.createElement(Meter, { value: n, max: TOTAL_BUILDINGS, label: t("cityGrowth") }), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n, total: TOTAL_BUILDINGS }))), /* @__PURE__ */ react_default.createElement(LangSelect, { lang, onChange: (l) => dispatch({ type: "LANG", lang: l }), label: t("chooseLang") }), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: () => setGate(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "people", size: 18 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, t("grownups")))), /* @__PURE__ */ react_default.createElement("div", { className: "mapwrap" }, /* @__PURE__ */ react_default.createElement(
       CityMap,
       {
         plots: state.plots,
@@ -1320,20 +1442,6 @@
       const locked = practised < d.needs;
       return /* @__PURE__ */ react_default.createElement("button", { type: "button", key: d.id, className: d.id === deco ? "chip sel" : "chip", disabled: locked, "aria-pressed": d.id === deco, onClick: () => patch({ d: d.id }) }, locked && /* @__PURE__ */ react_default.createElement(Icon, { name: "lock", size: 14 }), /* @__PURE__ */ react_default.createElement("span", null, t("d_" + d.id)), locked && /* @__PURE__ */ react_default.createElement("small", null, t("practiceToUnlock", { n: d.needs })));
     }))));
-  }
-  function ParentGate({ t, onClose, onPass }) {
-    const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
-    const [val, setVal] = useState("");
-    const [wrong, setWrong] = useState(false);
-    const submit = (e) => {
-      e.preventDefault();
-      if (Number(val) === q.a * q.b) onPass();
-      else setWrong(true);
-    };
-    return /* @__PURE__ */ react_default.createElement(Modal, { title: t("grownups"), onClose, closeLabel: t("close") }, /* @__PURE__ */ react_default.createElement("form", { className: "gate", onSubmit: submit }, /* @__PURE__ */ react_default.createElement("label", { htmlFor: "gate-answer" }, t("gateQ", q)), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("input", { id: "gate-answer", type: "text", inputMode: "numeric", autoComplete: "off", value: val, onChange: (e) => {
-      setVal(e.target.value);
-      setWrong(false);
-    } }), /* @__PURE__ */ react_default.createElement("button", { type: "submit", className: "btn primary" }, t("open"))), wrong && /* @__PURE__ */ react_default.createElement("p", { className: "gentle", role: "alert" }, t("gateWrong"))));
   }
 
   // src/activities/steps.jsx
@@ -1615,13 +1723,48 @@
     p10: { b: "park" },
     p5: { b: "center", d: "flag" }
   };
-  function Welcome({ state, dispatch, t, lang, go }) {
-    const [mode, setMode] = useState(state.mode);
-    const begin = () => {
-      dispatch({ type: "START", lang, mode });
+  var AVATARS = Object.keys(KIDS);
+  function NewPlayer({ t, canCancel, onCancel, onCreate }) {
+    const [nick, setNick] = useState("");
+    const [avatar, setAvatar] = useState(AVATARS[0]);
+    const [mode, setMode] = useState("little");
+    const submit = (e) => {
+      e.preventDefault();
+      onCreate({ nick, avatar, mode });
+    };
+    return /* @__PURE__ */ react_default.createElement("form", { className: "newplayer", onSubmit: submit }, /* @__PURE__ */ react_default.createElement("div", { className: "field" }, /* @__PURE__ */ react_default.createElement("label", { htmlFor: "nick-input" }, t("nickname")), /* @__PURE__ */ react_default.createElement(
+      "input",
+      {
+        id: "nick-input",
+        type: "text",
+        value: nick,
+        maxLength: NICK_MAX,
+        placeholder: t("nickHint"),
+        autoComplete: "off",
+        autoCapitalize: "words",
+        spellCheck: "false",
+        onChange: (e) => setNick(e.target.value)
+      }
+    ), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("nickNote"))), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("pickAvatar")), /* @__PURE__ */ react_default.createElement("div", { className: "avatars" }, AVATARS.map((id) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: id, className: id === avatar ? "avatar on" : "avatar", "aria-pressed": id === avatar, onClick: () => setAvatar(id) }, /* @__PURE__ */ react_default.createElement(Kid, { id, size: 56 }))))), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseAge")), /* @__PURE__ */ react_default.createElement("div", { className: "ages" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: m === mode ? `agecard ${m} on` : `agecard ${m}`, "aria-pressed": m === mode, onClick: () => setMode(m) }, /* @__PURE__ */ react_default.createElement("b", null, t(m)), /* @__PURE__ */ react_default.createElement("span", { className: "agetag" }, t(m + "Age")), /* @__PURE__ */ react_default.createElement("small", null, t(m + "Desc")))))), /* @__PURE__ */ react_default.createElement("button", { type: "submit", className: "btn primary big wide" }, /* @__PURE__ */ react_default.createElement(Icon, { name: "hammer" }), t("start")), canCancel && /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn wide", onClick: onCancel }, t("cancel")));
+  }
+  function Welcome({ profiles, activeId, dispatch, t, lang, go }) {
+    const [creating, setCreating] = useState(false);
+    const [del, setDel] = useState(null);
+    const showForm = creating || profiles.length === 0;
+    const target = del && profiles.find((p) => p.id === del.id);
+    const play = (id) => {
+      dispatch({ type: "PROFILE_SELECT", id });
       go("city");
     };
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen welcome" }, /* @__PURE__ */ react_default.createElement("div", { className: "welcome-art" }, /* @__PURE__ */ react_default.createElement(CityMap, { plots: DEMO_PLOTS, demo: true, title: "Little City Makers" })), /* @__PURE__ */ react_default.createElement("main", { className: "welcome-card" }, /* @__PURE__ */ react_default.createElement("h1", { className: "logo", "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "l1", "aria-hidden": "true" }, "Little"), /* @__PURE__ */ react_default.createElement("span", { className: "blocks", "aria-hidden": "true" }, "CITY".split("").map((ch, k) => /* @__PURE__ */ react_default.createElement("b", { key: k, className: `blk b${k}` }, ch))), /* @__PURE__ */ react_default.createElement("span", { className: "l3", "aria-hidden": "true" }, "Makers")), /* @__PURE__ */ react_default.createElement("p", { className: "tagline", lang: "en" }, "Learn. Build. Belong."), lang !== "en" && /* @__PURE__ */ react_default.createElement(Sup3, { text: t("tagline"), lang }), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseLang")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, LANGS.map((l) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: l.id, className: l.id === lang ? "segbtn on" : "segbtn", "aria-pressed": l.id === lang, onClick: () => dispatch({ type: "LANG", lang: l.id }), lang: l.id }, l.label)))), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseAge")), /* @__PURE__ */ react_default.createElement("div", { className: "ages" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: m === mode ? `agecard ${m} on` : `agecard ${m}`, "aria-pressed": m === mode, onClick: () => setMode(m) }, /* @__PURE__ */ react_default.createElement("b", null, t(m)), /* @__PURE__ */ react_default.createElement("span", { className: "agetag" }, t(m + "Age")), /* @__PURE__ */ react_default.createElement("small", null, t(m + "Desc")))))), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn primary big wide", onClick: begin }, /* @__PURE__ */ react_default.createElement(Icon, { name: "hammer" }), state.started ? t("continue") : t("start")), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("privacy"))));
+    const create = (v2) => {
+      dispatch({ type: "PROFILE_ADD", id: newId(), now: Date.now(), ...v2 });
+      setCreating(false);
+      go("city");
+    };
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen welcome" }, /* @__PURE__ */ react_default.createElement("div", { className: "welcome-art" }, /* @__PURE__ */ react_default.createElement(CityMap, { plots: DEMO_PLOTS, demo: true, title: "Little City Makers" })), /* @__PURE__ */ react_default.createElement("main", { className: "welcome-card" }, /* @__PURE__ */ react_default.createElement("h1", { className: "logo", "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "l1", "aria-hidden": "true" }, "Little"), /* @__PURE__ */ react_default.createElement("span", { className: "blocks", "aria-hidden": "true" }, "CITY".split("").map((ch, k) => /* @__PURE__ */ react_default.createElement("b", { key: k, className: `blk b${k}` }, ch))), /* @__PURE__ */ react_default.createElement("span", { className: "l3", "aria-hidden": "true" }, "Makers")), /* @__PURE__ */ react_default.createElement("p", { className: "tagline", lang: "en" }, "Learn. Build. Belong."), lang !== "en" && /* @__PURE__ */ react_default.createElement(Sup3, { text: t("tagline"), lang }), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseLang")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, LANGS.map((l) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: l.id, className: l.id === lang ? "segbtn on" : "segbtn", "aria-pressed": l.id === lang, onClick: () => dispatch({ type: "LANG", lang: l.id }), lang: l.id }, l.label)))), showForm ? /* @__PURE__ */ react_default.createElement(NewPlayer, { t, canCancel: profiles.length > 0, onCancel: () => setCreating(false), onCreate: create }) : /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("whoPlays")), /* @__PURE__ */ react_default.createElement("ul", { className: "players" }, profiles.map((p) => /* @__PURE__ */ react_default.createElement("li", { key: p.id, className: "player" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: p.id === activeId ? "playerbtn last" : "playerbtn", onClick: () => play(p.id) }, /* @__PURE__ */ react_default.createElement(Kid, { id: p.avatar, size: 52 }), /* @__PURE__ */ react_default.createElement("span", null, /* @__PURE__ */ react_default.createElement("b", null, p.nick), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n: placedCount(p.game), total: TOTAL_BUILDINGS }), " \xB7 ", t(p.game.mode), p.id === activeId ? ` \xB7 ${t("lastPlayed")}` : ""))), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round", onClick: () => setDel({ id: p.id, ok: false }), "aria-label": t("removePlayer", { name: p.nick }) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "trash", size: 20 })))))), profiles.length < MAX_PLAYERS ? /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn big wide", onClick: () => setCreating(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "plus" }), t("newPlayer")) : /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("playersFull")), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("keepNote"))), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("privacy")), target && !del.ok && /* @__PURE__ */ react_default.createElement(ParentGate, { t, onClose: () => setDel(null), onPass: () => setDel({ id: del.id, ok: true }) }), target && del.ok && /* @__PURE__ */ react_default.createElement(Modal, { title: t("removePlayer", { name: target.nick }), onClose: () => setDel(null), closeLabel: t("close") }, /* @__PURE__ */ react_default.createElement("p", null, t("removeAsk", { name: target.nick })), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
+      dispatch({ type: "PROFILE_DELETE", id: del.id });
+      setDel(null);
+    } }, t("removeYes")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setDel(null) }, t("cancel"))))));
   }
   function Missions({ state, t, lang, go, onPlay }) {
     const doneN = Object.keys(state.missions).length;
@@ -1649,14 +1792,14 @@
       return /* @__PURE__ */ react_default.createElement("li", { key: k }, /* @__PURE__ */ react_default.createElement("span", null, t("sk_" + k)), /* @__PURE__ */ react_default.createElement(Meter, { value: v2, max, label: t("sk_" + k) }), /* @__PURE__ */ react_default.createElement("small", null, v2 ? t("activities", { n: v2 }) : t("notYet")));
     }));
   }
-  function Parent({ state, dispatch, t, lang, go, saved }) {
+  function Parent({ state, dispatch, t, lang, go, saved, player }) {
     const [ask, setAsk] = useState(false);
     const done = MISSIONS.filter((m) => state.missions[m.id]);
     const words = [...new Map(done.flatMap((m) => m.vocab).map((w) => [w.w, w])).values()];
     const n = placedCount(state);
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen paper" }, /* @__PURE__ */ react_default.createElement(TopBar, { title: t("parentTitle"), onBack: () => go("city"), backLabel: t("city") }), /* @__PURE__ */ react_default.createElement("main", { className: "page" }, /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("overview")), /* @__PURE__ */ react_default.createElement("div", { className: "stats" }, /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, done.length, "/", MISSIONS.length), /* @__PURE__ */ react_default.createElement("span", null, t("missionsDone"))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, n, "/", TOTAL_BUILDINGS), /* @__PURE__ */ react_default.createElement("span", null, t("cityGrowth"), ": ", t("lv" + levelOf(n)))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, words.length), /* @__PURE__ */ react_default.createElement("span", null, t("words")))), /* @__PURE__ */ react_default.createElement("h3", null, t("modeLabel")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: state.mode === m ? "segbtn on" : "segbtn", "aria-pressed": state.mode === m, onClick: () => dispatch({ type: "MODE", mode: m }) }, t(m), " \xB7 ", t(m + "Age")))), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("modeNote"))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("engSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: ENGLISH, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("lifeSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: LIFE, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("missionsDone")), done.length === 0 ? /* @__PURE__ */ react_default.createElement("p", { className: "empty" }, t("noneYet")) : /* @__PURE__ */ react_default.createElement("ul", { className: "donelist" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, /* @__PURE__ */ react_default.createElement(Icon, { name: "check", size: 18 }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, loc(m.title, lang)), /* @__PURE__ */ react_default.createElement("small", null, loc(m.objective, lang)))))), done.length > 0 && /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("h3", null, t("sentences")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist", lang: "en" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, m.target))), /* @__PURE__ */ react_default.createElement("h3", null, t("words")), /* @__PURE__ */ react_default.createElement("p", { className: "wordcloud", lang: "en" }, words.map((w) => /* @__PURE__ */ react_default.createElement("span", { key: w.w }, w.w))))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("aboutData")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist" }, /* @__PURE__ */ react_default.createElement("li", null, saved ? t("savedOk") : t("savedNo")), /* @__PURE__ */ react_default.createElement("li", null, t("noPersonal")), /* @__PURE__ */ react_default.createElement("li", null, t("contentNote"))), ask ? /* @__PURE__ */ react_default.createElement("div", { className: "confirm", role: "alertdialog", "aria-label": t("reset") }, /* @__PURE__ */ react_default.createElement("p", null, t("resetAsk")), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen paper" }, /* @__PURE__ */ react_default.createElement(TopBar, { title: t("parentTitle"), onBack: () => go("city"), backLabel: t("city") }), /* @__PURE__ */ react_default.createElement("main", { className: "page" }, /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("overview"), player ? ` \xB7 ${player.nick}` : ""), /* @__PURE__ */ react_default.createElement("div", { className: "stats" }, /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, done.length, "/", MISSIONS.length), /* @__PURE__ */ react_default.createElement("span", null, t("missionsDone"))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, n, "/", TOTAL_BUILDINGS), /* @__PURE__ */ react_default.createElement("span", null, t("cityGrowth"), ": ", t("lv" + levelOf(n)))), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, words.length), /* @__PURE__ */ react_default.createElement("span", null, t("words")))), /* @__PURE__ */ react_default.createElement("h3", null, t("modeLabel")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, ["little", "junior"].map((m) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: m, className: state.mode === m ? "segbtn on" : "segbtn", "aria-pressed": state.mode === m, onClick: () => dispatch({ type: "MODE", mode: m }) }, t(m), " \xB7 ", t(m + "Age")))), /* @__PURE__ */ react_default.createElement("p", { className: "fine left" }, t("modeNote"))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("engSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: ENGLISH, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("lifeSkills")), /* @__PURE__ */ react_default.createElement(SkillRows, { keys: LIFE, skills: state.skills, t })), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("missionsDone")), done.length === 0 ? /* @__PURE__ */ react_default.createElement("p", { className: "empty" }, t("noneYet")) : /* @__PURE__ */ react_default.createElement("ul", { className: "donelist" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, /* @__PURE__ */ react_default.createElement(Icon, { name: "check", size: 18 }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", null, loc(m.title, lang)), /* @__PURE__ */ react_default.createElement("small", null, loc(m.objective, lang)))))), done.length > 0 && /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("h3", null, t("sentences")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist", lang: "en" }, done.map((m) => /* @__PURE__ */ react_default.createElement("li", { key: m.id }, m.target))), /* @__PURE__ */ react_default.createElement("h3", null, t("words")), /* @__PURE__ */ react_default.createElement("p", { className: "wordcloud", lang: "en" }, words.map((w) => /* @__PURE__ */ react_default.createElement("span", { key: w.w }, w.w))))), /* @__PURE__ */ react_default.createElement("section", { className: "sheet" }, /* @__PURE__ */ react_default.createElement("h2", null, t("aboutData")), /* @__PURE__ */ react_default.createElement("ul", { className: "plainlist" }, /* @__PURE__ */ react_default.createElement("li", null, saved ? t("savedOk") : t("savedNo")), /* @__PURE__ */ react_default.createElement("li", null, t("noPersonal")), /* @__PURE__ */ react_default.createElement("li", null, t("contentNote"))), ask ? /* @__PURE__ */ react_default.createElement("div", { className: "confirm", role: "alertdialog", "aria-label": t("reset") }, /* @__PURE__ */ react_default.createElement("p", null, t("resetAsk")), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
       dispatch({ type: "RESET" });
-      go("welcome");
+      go("city");
     } }, t("resetYes")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setAsk(false) }, t("cancel")))) : /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setAsk(true) }, t("reset")))));
   }
 
@@ -1664,41 +1807,46 @@
   var SCREENS = ["welcome", "city", "missions", "achievements", "parent"];
   function App({ boot }) {
     const [init] = useState(load);
-    const [state, dispatch] = useReducer(reducer, boot?.state?.v === 1 ? boot.state : init.state);
+    const [root2, dispatch] = useReducer(rootReducer, boot?.root?.v === 2 ? boot.root : init.root);
     const [saved, setSaved] = useState(init.ok);
-    const [screen, setScreen] = useState(() => SCREENS.includes(boot?.screen) ? boot.screen : state.started ? "city" : "welcome");
+    const [screen, setScreen] = useState(() => SCREENS.includes(boot?.screen) ? boot.screen : root2.profiles.length === 1 && root2.active ? "city" : "welcome");
     const [play, setPlay] = useState(null);
     const [buildNext, setBuildNext] = useState(null);
     const [session, setSession] = useState(0);
-    const t = useMemo(() => makeT(state.lang), [state.lang]);
-    const live = useRef({ state, screen });
-    live.current = { state, screen };
+    const active = root2.profiles.find((p) => p.id === root2.active) || null;
+    const state = useMemo(() => ({ ...active ? active.game : fresh(), lang: root2.lang }), [active, root2.lang]);
+    const player = active ? { nick: active.nick, avatar: active.avatar } : null;
+    const t = useMemo(() => makeT(root2.lang), [root2.lang]);
+    const live = useRef({ root: root2, screen });
+    live.current = { root: root2, screen };
     useEffect(() => {
-      setSaved(save(state));
-    }, [state]);
+      setSaved(save(root2));
+    }, [root2]);
     useEffect(() => {
-      document.documentElement.lang = state.lang;
-    }, [state.lang]);
+      document.documentElement.lang = root2.lang;
+    }, [root2.lang]);
     useEffect(() => {
       window.claude?.hot?.snapshot?.(() => live.current);
     }, []);
     const go = (name) => {
       setPlay(null);
       if (name !== "city") setBuildNext(null);
+      if (name === "welcome") setSession(0);
       setScreen(name);
     };
     const startMission = (missionId, practice = false) => {
       setPlay({ missionId, practice });
       setScreen("activity");
     };
-    const common = { state, dispatch, t, lang: state.lang, go };
-    if (screen === "activity" && play) {
+    const common = { state, dispatch, t, lang: root2.lang, go, player };
+    const view = active ? screen : "welcome";
+    if (view === "activity" && play) {
       const mission = MISSIONS_BY_ID[play.missionId];
       const building = BUILDINGS_BY_ID[mission.building];
       return /* @__PURE__ */ react_default.createElement(
         MissionPlayer,
         {
-          key: `${play.missionId}-${play.practice}-${state.mode}`,
+          key: `${active.id}-${play.missionId}-${play.practice}-${state.mode}`,
           mission,
           building,
           mode: state.mode,
@@ -1725,13 +1873,13 @@
         }
       );
     }
-    if (screen === "missions") return /* @__PURE__ */ react_default.createElement(Missions, { ...common, onPlay: (id) => startMission(id) });
-    if (screen === "achievements") return /* @__PURE__ */ react_default.createElement(Achievements, { ...common });
-    if (screen === "parent") return /* @__PURE__ */ react_default.createElement(Parent, { ...common, saved });
-    if (screen === "city" || screen === "activity") {
-      return /* @__PURE__ */ react_default.createElement(City, { ...common, key: buildNext || "city", initialBuild: buildNext, onPractice: (bId) => startMission(BUILDINGS_BY_ID[bId].mission, true) });
+    if (view === "missions") return /* @__PURE__ */ react_default.createElement(Missions, { ...common, onPlay: (id) => startMission(id) });
+    if (view === "achievements") return /* @__PURE__ */ react_default.createElement(Achievements, { ...common });
+    if (view === "parent") return /* @__PURE__ */ react_default.createElement(Parent, { ...common, saved });
+    if (view === "city" || view === "activity") {
+      return /* @__PURE__ */ react_default.createElement(City, { ...common, key: `${active.id}-${buildNext || "city"}`, initialBuild: buildNext, onPractice: (bId) => startMission(BUILDINGS_BY_ID[bId].mission, true) });
     }
-    return /* @__PURE__ */ react_default.createElement(Welcome, { ...common });
+    return /* @__PURE__ */ react_default.createElement(Welcome, { ...common, profiles: root2.profiles, activeId: root2.active });
   }
 
   // src/main.jsx
