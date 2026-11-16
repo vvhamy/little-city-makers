@@ -8,6 +8,7 @@ Tagline: "Learn. Build. Belong." Tablet-first, responsive. Interface languages: 
     npm install
     npm run build    # bundles src/ -> dist/ (open dist/index.html)
     npm run check    # content QA. Run after ANY change to data/missions.js, data/buildings.js or data/i18n.js
+    npm test         # unit tests for src/state/store.js (tests/)
 
 Run both before finishing a task. A task is not done if `npm run check` fails.
 
