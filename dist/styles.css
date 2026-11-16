@@ -380,3 +380,8 @@ button.tile { min-height: 52px; min-width: 52px; padding: 0 .8em; border-radius:
 .welcome { position: relative; }
 .welcome-music { position: absolute; top: 12px; right: 12px; z-index: 3; }
 .playbar-right { display: flex; align-items: center; gap: 8px; }
+
+/* Voice picker (Grown-ups area) */
+.voicepick { display: grid; gap: 8px; }
+.voicepick select { min-height: 48px; max-width: 100%; padding: 0 .6em; border-radius: 16px; border: 2px solid var(--line); background: var(--white); font-weight: 800; flex: 1 1 220px; min-width: 0; }
+.voicepick .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }

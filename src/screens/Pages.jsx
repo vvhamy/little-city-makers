@@ -1,6 +1,6 @@
 // Screen 1 (Welcome), Screen 3 (Mission Center), Screen 7 (Achievements), Screen 8 (Parent Dashboard).
 import React, { useState } from 'react';
-import { Icon, Meter, Modal, MusicToggle, ParentGate, TopBar } from '../components/ui.jsx';
+import { Icon, Meter, Modal, MusicToggle, ParentGate, TopBar, VoicePicker } from '../components/ui.jsx';
 import { CityMap } from '../art/CityMap.jsx';
 import { BuildingThumb } from '../art/BuildingArt.jsx';
 import { KIDS, Kid, Pip } from '../art/Characters.jsx';
@@ -302,6 +302,11 @@ export function Parent({ state, dispatch, t, lang, go, saved, player }) {
               <p className="wordcloud" lang="en">{words.map((w) => <span key={w.w}>{w.w}</span>)}</p>
             </>
           )}
+        </section>
+
+        <section className="sheet">
+          <h2>{t('voiceTitle')}</h2>
+          <VoicePicker t={t} />
         </section>
 
         <section className="sheet">

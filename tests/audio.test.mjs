@@ -49,11 +49,11 @@ test('music is on by default and the choice is remembered', async () => {
   assert.equal(m.musicEnabled(), true);
   m.setMusic(false);
   assert.equal(m.musicEnabled(), false);
-  assert.deepEqual(JSON.parse(d['little-city-makers.audio']), { music: false });
+  assert.deepEqual(JSON.parse(d['little-city-makers.audio']), { music: false, voice: null });
   m._resetForTests(); // reads the stored choice again
   assert.equal(m.musicEnabled(), false);
   m.setMusic(true);
-  assert.deepEqual(JSON.parse(d['little-city-makers.audio']), { music: true });
+  assert.deepEqual(JSON.parse(d['little-city-makers.audio']), { music: true, voice: null });
 });
 
 test('music subscribers hear changes and storage failures do not crash', async () => {
@@ -73,4 +73,31 @@ test('without Web Audio the music is reported as unsupported and unlocking does 
   assert.equal(m.musicSupported, false); // Node has no AudioContext
   assert.doesNotThrow(() => m.unlockMusic());
   assert.doesNotThrow(() => m.duckMusic(true));
+});
+
+test('a voice chosen by a grown-up wins over the automatic pick', () => {
+  const voices = [v('Samantha'), v('Daniel', 'en-GB')];
+  assert.equal(pickVoice(voices, 'Daniel').name, 'Daniel');
+  assert.equal(pickVoice(voices, 'Missing Voice').name, 'Samantha'); // unknown name falls back to automatic
+  assert.equal(pickVoice([v('Thomas', 'fr-FR')], 'Thomas'), null);   // never a non-English voice
+});
+
+test('englishVoices lists only English voices, softest first', async () => {
+  const { englishVoices } = await import('../src/audio/voice.js');
+  assert.deepEqual(englishVoices([v('Alex'), v('Yuna', 'ko-KR'), v('Samantha')]).map((x) => x.name), ['Samantha', 'Alex']);
+});
+
+test('sound preferences keep music and voice together and survive bad storage', async () => {
+  const d = stub();
+  const { readPrefs, writePrefs } = await import('../src/audio/prefs.js');
+  assert.deepEqual(readPrefs(), { music: true, voice: null });
+  writePrefs({ voice: 'Samantha' });
+  writePrefs({ music: false });
+  assert.deepEqual(readPrefs(), { music: false, voice: 'Samantha' });
+  assert.deepEqual(JSON.parse(d['little-city-makers.audio']), { music: false, voice: 'Samantha' });
+  stub({ 'little-city-makers.audio': '{bad' });
+  assert.deepEqual(readPrefs(), { music: true, voice: null });
+  stub({}, true);
+  assert.equal(writePrefs({ music: false }), false);
+  delete globalThis.localStorage;
 });

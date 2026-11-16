@@ -47,6 +47,6 @@ Run both before finishing a task. A task is not done if `npm run check` fails.
 
 - Speaking steps are not recorded or assessed. The UI says so.
 - Audio uses the browser speech voice. `src/audio/voice.js` picks the softest English voice the device has and speaks slowly; quality still depends on the device. Production needs recorded audio.
-- Background music is generated live (`src/audio/music.js`, Web Audio, no files). It starts at the first tap, is quiet, ducks while the voice speaks, and has an on/off button (choice saved in `little-city-makers.audio`). Production may replace it with composed, licensed music.
+- Background music is generated live (`src/audio/music.js`, Web Audio, no files). It starts at the first tap, is quiet, ducks while the voice speaks, and has an on/off button (choice saved in `little-city-makers.audio`). It starts on the finger-lift/click, not on touch-down, because touch screens only count that as a user gesture. Grown-ups can pick the reading voice from the device's English voices in the Parent Dashboard. Production may replace it with composed, licensed music.
 - Players are local profiles in localStorage on one device. No accounts, no server, no sync between devices. There is no leaderboard by design (see rule 6); do not add one without an explicit decision from the owner and a privacy review.
 - 11 of the 23 planned buildings exist (Café added). See ROADMAP.md.
