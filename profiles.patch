@@ -1,0 +1,612 @@
+diff --git a/README.md b/README.md
+index 2f74576..b652627 100644
+--- a/README.md
++++ b/README.md
+@@ -38,7 +38,7 @@ Open `dist/index.html` in a browser. React 18 is loaded from a CDN in this proto
+ - Speaking steps are prompts only. Nothing is recorded or checked.
+ - Audio uses the browser's built-in speech voice; Listen buttons hide when no voice exists.
+   Production should use recorded audio by teachers or voice actors.
+-- Progress is stored in `localStorage` on one device. There are no accounts and no server.
++- Players are local profiles (nickname + picture) on one device, saved in `localStorage`. There are no accounts, no passwords and no server, so progress does not sync between devices and there is no shared ranking.
+ - Content was written for this prototype and still needs review by teachers and by
+   Vietnamese and Korean cultural reviewers before use with children.
+ - The parent gate (a multiplication question) keeps small children out; it is not security.
+diff --git a/src/App.jsx b/src/App.jsx
+index 883b6b4..6d97367 100644
+--- a/src/App.jsx
++++ b/src/App.jsx
+@@ -3,7 +3,7 @@ import React, { useEffect, useMemo, useReducer, useRef, useState } from 'react';
+ import { makeT } from './data/i18n.js';
+ import { BUILDINGS_BY_ID } from './data/buildings.js';
+ import { MISSIONS_BY_ID } from './data/missions.js';
+-import { load, placedMap, reducer, save } from './state/store.js';
++import { fresh, load, placedMap, rootReducer, save } from './state/store.js';
+ import { City } from './screens/City.jsx';
+ import { MissionPlayer } from './screens/MissionPlayer.jsx';
+ import { Achievements, Missions, Parent, Welcome } from './screens/Pages.jsx';
+@@ -12,33 +12,44 @@ const SCREENS = ['welcome', 'city', 'missions', 'achievements', 'parent'];
+ 
+ export default function App({ boot }) {
+   const [init] = useState(load);
+-  const [state, dispatch] = useReducer(reducer, boot?.state?.v === 1 ? boot.state : init.state);
++  const [root, dispatch] = useReducer(rootReducer, boot?.root?.v === 2 ? boot.root : init.root);
+   const [saved, setSaved] = useState(init.ok);
+-  const [screen, setScreen] = useState(() => (SCREENS.includes(boot?.screen) ? boot.screen : state.started ? 'city' : 'welcome'));
+-  const [play, setPlay] = useState(null);         // { missionId, practice }
++  // With one player we go straight to their city. With several, each child picks themselves first.
++  const [screen, setScreen] = useState(() => (SCREENS.includes(boot?.screen) ? boot.screen : root.profiles.length === 1 && root.active ? 'city' : 'welcome'));
++  const [play, setPlay] = useState(null);           // { missionId, practice }
+   const [buildNext, setBuildNext] = useState(null); // building to pre-select in construction mode
+   const [session, setSession] = useState(0);        // new missions finished in this visit (for the break reminder)
+ 
+-  const t = useMemo(() => makeT(state.lang), [state.lang]);
+-  const live = useRef({ state, screen });
+-  live.current = { state, screen };
++  const active = root.profiles.find((p) => p.id === root.active) || null;
++  // Screens read one flat object: the active player's game plus the device language.
++  const state = useMemo(() => ({ ...(active ? active.game : fresh()), lang: root.lang }), [active, root.lang]);
++  const player = active ? { nick: active.nick, avatar: active.avatar } : null;
++  const t = useMemo(() => makeT(root.lang), [root.lang]);
++  const live = useRef({ root, screen });
++  live.current = { root, screen };
+ 
+-  useEffect(() => { setSaved(save(state)); }, [state]);
+-  useEffect(() => { document.documentElement.lang = state.lang; }, [state.lang]);
++  useEffect(() => { setSaved(save(root)); }, [root]);
++  useEffect(() => { document.documentElement.lang = root.lang; }, [root.lang]);
+   // Keep a child's place if the page is republished while they are playing.
+   useEffect(() => { window.claude?.hot?.snapshot?.(() => live.current); }, []);
+ 
+-  const go = (name) => { setPlay(null); if (name !== 'city') setBuildNext(null); setScreen(name); };
++  const go = (name) => {
++    setPlay(null);
++    if (name !== 'city') setBuildNext(null);
++    if (name === 'welcome') setSession(0);
++    setScreen(name);
++  };
+   const startMission = (missionId, practice = false) => { setPlay({ missionId, practice }); setScreen('activity'); };
+ 
+-  const common = { state, dispatch, t, lang: state.lang, go };
++  const common = { state, dispatch, t, lang: root.lang, go, player };
++  const view = active ? screen : 'welcome';
+ 
+-  if (screen === 'activity' && play) {
++  if (view === 'activity' && play) {
+     const mission = MISSIONS_BY_ID[play.missionId];
+     const building = BUILDINGS_BY_ID[mission.building];
+     return (
+       <MissionPlayer
+-        key={`${play.missionId}-${play.practice}-${state.mode}`}
++        key={`${active.id}-${play.missionId}-${play.practice}-${state.mode}`}
+         mission={mission} building={building} mode={state.mode} lang={state.lang} t={t}
+         practice={play.practice}
+         wasDone={!!state.missions[mission.id]}
+@@ -57,11 +68,11 @@ export default function App({ boot }) {
+       />
+     );
+   }
+-  if (screen === 'missions') return <Missions {...common} onPlay={(id) => startMission(id)} />;
+-  if (screen === 'achievements') return <Achievements {...common} />;
+-  if (screen === 'parent') return <Parent {...common} saved={saved} />;
+-  if (screen === 'city' || screen === 'activity') {
+-    return <City {...common} key={buildNext || 'city'} initialBuild={buildNext} onPractice={(bId) => startMission(BUILDINGS_BY_ID[bId].mission, true)} />;
++  if (view === 'missions') return <Missions {...common} onPlay={(id) => startMission(id)} />;
++  if (view === 'achievements') return <Achievements {...common} />;
++  if (view === 'parent') return <Parent {...common} saved={saved} />;
++  if (view === 'city' || view === 'activity') {
++    return <City {...common} key={`${active.id}-${buildNext || 'city'}`} initialBuild={buildNext} onPractice={(bId) => startMission(BUILDINGS_BY_ID[bId].mission, true)} />;
+   }
+-  return <Welcome {...common} />;
++  return <Welcome {...common} profiles={root.profiles} activeId={root.active} />;
+ }
+diff --git a/src/components/ui.jsx b/src/components/ui.jsx
+index 1dc4e3c..d93b3d0 100644
+--- a/src/components/ui.jsx
++++ b/src/components/ui.jsx
+@@ -1,5 +1,5 @@
+ // Shared interface pieces: icons, audio, modal, top bar, progress bar.
+-import React, { useEffect } from 'react';
++import React, { useEffect, useState } from 'react';
+ import { LANGS } from '../data/i18n.js';
+ 
+ const PATHS = {
+@@ -19,6 +19,8 @@ const PATHS = {
+   play: 'M8 5l11 7-11 7z',
+   mic: 'M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v3',
+   next: 'M9 5l7 7-7 7',
++  plus: 'M12 5v14M5 12h14',
++  trash: 'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13M10 11v6M14 11v6',
+ };
+ 
+ export function Icon({ name, size = 22 }) {
+@@ -115,3 +117,26 @@ export const shuffle = (list) => {
+   }
+   return a;
+ };
++
++// A light gate so small children do not wander into grown-up actions. It is not a security feature.
++export function ParentGate({ t, onClose, onPass }) {
++  const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
++  const [val, setVal] = useState('');
++  const [wrong, setWrong] = useState(false);
++  const submit = (e) => {
++    e.preventDefault();
++    if (Number(val) === q.a * q.b) onPass(); else setWrong(true);
++  };
++  return (
++    <Modal title={t('grownups')} onClose={onClose} closeLabel={t('close')}>
++      <form className="gate" onSubmit={submit}>
++        <label htmlFor="gate-answer">{t('gateQ', q)}</label>
++        <div className="row">
++          <input id="gate-answer" type="text" inputMode="numeric" autoComplete="off" autoFocus value={val} onChange={(e) => { setVal(e.target.value); setWrong(false); }} />
++          <button type="submit" className="btn primary">{t('open')}</button>
++        </div>
++        {wrong && <p className="gentle" role="alert">{t('gateWrong')}</p>}
++      </form>
++    </Modal>
++  );
++}
+diff --git a/src/data/i18n.js b/src/data/i18n.js
+index 33fc75b..93796b6 100644
+--- a/src/data/i18n.js
++++ b/src/data/i18n.js
+@@ -14,14 +14,28 @@ export const UI = {
+   start: s('Start Building', 'Bắt đầu xây', '도시 만들기 시작'),
+   continue: s('Continue my city', 'Tiếp tục thành phố của mình', '내 도시 이어서 하기'),
+   chooseLang: s('Language', 'Ngôn ngữ', '언어'),
+-  chooseAge: s('Who is playing?', 'Ai đang chơi?', '누가 플레이하나요?'),
++  chooseAge: s('Pick your mode', 'Chọn chế độ chơi', '모드 고르기'),
+   little: s('Little Makers', 'Little Makers', 'Little Makers'),
+   littleAge: s('Ages 4–6', '4–6 tuổi', '4–6세'),
+   littleDesc: s('Pictures, sounds and short games', 'Hình ảnh, âm thanh và trò chơi ngắn', '그림, 소리, 짧은 놀이'),
+   junior: s('Junior Makers', 'Junior Makers', 'Junior Makers'),
+   juniorAge: s('Ages 7–10', '7–10 tuổi', '7–10세'),
+   juniorDesc: s('Sentences, reading and bigger missions', 'Đặt câu, bài đọc và nhiệm vụ lớn hơn', '문장, 읽기, 더 큰 미션'),
+-  privacy: s('No names. No accounts. Progress stays in this browser.', 'Không cần tên. Không cần tài khoản. Tiến độ chỉ lưu trên trình duyệt này.', '이름도 계정도 필요 없어요. 진행 상황은 이 브라우저에만 저장돼요.'),
++  privacy: s('Just a nickname. No accounts. Progress stays in this browser.', 'Chỉ cần biệt danh. Không cần tài khoản. Tiến độ chỉ lưu trên trình duyệt này.', '별명만 있으면 돼요. 계정은 필요 없어요. 진행 상황은 이 브라우저에만 저장돼요.'),
++
++  whoPlays: s('Who is playing?', 'Ai đang chơi?', '누가 플레이하나요?'),
++  newPlayer: s('New player', 'Người chơi mới', '새 플레이어'),
++  nickname: s('Nickname', 'Biệt danh', '별명'),
++  nickHint: s('A fun name', 'Một cái tên vui', '재미있는 이름'),
++  nickNote: s('Use a nickname, not your real name. Please do not type your school, address or phone number.', 'Hãy dùng biệt danh, không dùng tên thật. Đừng nhập tên trường, địa chỉ hay số điện thoại.', '진짜 이름 대신 별명을 써 주세요. 학교, 주소, 전화번호는 적지 마세요.'),
++  pickAvatar: s('Pick a picture', 'Chọn một hình đại diện', '그림 고르기'),
++  keepNote: s('Other players stay saved on this device.', 'Những người chơi khác vẫn được lưu trên thiết bị này.', '다른 플레이어는 이 기기에 그대로 저장돼요.'),
++  playersFull: s('This device has 8 players. A grown-up can remove one to make space.', 'Thiết bị này đã có 8 người chơi. Người lớn có thể xóa bớt một người để có chỗ.', '이 기기에 플레이어가 8명 있어요. 보호자가 한 명을 지우면 자리가 생겨요.'),
++  removePlayer: s('Remove {name}', 'Xóa {name}', '{name} 지우기'),
++  removeAsk: s('Delete {name} and the whole city? This cannot be undone.', 'Xóa {name} và toàn bộ thành phố? Không thể hoàn tác.', '{name}의 도시와 진행 상황을 모두 지울까요? 되돌릴 수 없어요.'),
++  removeYes: s('Yes, delete', 'Có, xóa', '네, 지울게요'),
++  switchPlayer: s('Switch player', 'Đổi người chơi', '플레이어 바꾸기'),
++  lastPlayed: s('Last played', 'Chơi gần nhất', '가장 최근'),
+ 
+   missions: s('Missions', 'Nhiệm vụ', '미션'),
+   build: s('Build', 'Xây dựng', '짓기'),
+@@ -153,10 +167,10 @@ export const UI = {
+   aboutData: s('Safety and data', 'An toàn và dữ liệu', '안전과 데이터'),
+   savedOk: s('Progress is saved in this browser only. Nothing is sent anywhere.', 'Tiến độ chỉ được lưu trên trình duyệt này. Không có dữ liệu nào được gửi đi.', '진행 상황은 이 브라우저에만 저장되며 어디에도 전송되지 않습니다.'),
+   savedNo: s('This browser is blocking storage, so progress will be lost when the page closes.', 'Trình duyệt này đang chặn lưu trữ nên tiến độ sẽ mất khi đóng trang.', '이 브라우저가 저장을 차단하고 있어 페이지를 닫으면 진행 상황이 사라집니다.'),
+-  noPersonal: s('The game never asks for a name, address, school or phone number. There is no leaderboard, no chat and nothing to buy.', 'Trò chơi không bao giờ hỏi tên, địa chỉ, trường học hay số điện thoại. Không có bảng xếp hạng, không trò chuyện và không có gì để mua.', '이 게임은 이름, 주소, 학교, 전화번호를 묻지 않습니다. 순위표, 채팅, 구매 요소가 없습니다.'),
++  noPersonal: s('The game only asks for a nickname. It never asks for a real name, address, school or phone number. There is no leaderboard, no chat and nothing to buy.', 'Trò chơi chỉ hỏi biệt danh. Không bao giờ hỏi tên thật, địa chỉ, trường học hay số điện thoại. Không có bảng xếp hạng, không trò chuyện và không có gì để mua.', '이 게임은 별명만 물어봅니다. 실명, 주소, 학교, 전화번호는 묻지 않습니다. 순위표, 채팅, 구매 요소가 없습니다.'),
+   contentNote: s("All activities use fixed, pre-written content. No live AI talks with your child. Speaking steps are not recorded or checked. Audio uses your device's built-in voice.", 'Mọi hoạt động dùng nội dung soạn sẵn. Không có AI trò chuyện trực tiếp với trẻ. Phần luyện nói không được ghi âm hay chấm điểm. Âm thanh dùng giọng đọc có sẵn trên thiết bị.', '모든 활동은 미리 작성된 내용을 사용합니다. 아이와 실시간으로 대화하는 AI는 없습니다. 말하기 단계는 녹음하거나 평가하지 않습니다. 음성은 기기의 기본 음성을 사용합니다.'),
+   reset: s('Reset progress', 'Xóa tiến độ', '진행 상황 초기화'),
+-  resetAsk: s('Erase the city and all progress? This cannot be undone.', 'Xóa thành phố và toàn bộ tiến độ? Không thể hoàn tác.', '도시와 모든 진행 상황을 지울까요? 되돌릴 수 없습니다.'),
++  resetAsk: s('Erase this player’s city and all progress? This cannot be undone.', 'Xóa thành phố và toàn bộ tiến độ của người chơi này? Không thể hoàn tác.', '이 플레이어의 도시와 모든 진행 상황을 지울까요? 되돌릴 수 없어요.'),
+   resetYes: s('Yes, erase', 'Có, xóa', '네, 지울게요'),
+ 
+   sk_listening: s('Listening', 'Nghe', '듣기'),
+diff --git a/src/screens/City.jsx b/src/screens/City.jsx
+index ac51eb3..559f516 100644
+--- a/src/screens/City.jsx
++++ b/src/screens/City.jsx
+@@ -1,9 +1,9 @@
+ // Screen 2 (City Map), Screen 5 (Construction Mode) and Screen 6's entry point (building panel).
+ import React, { useEffect, useRef, useState } from 'react';
+-import { Icon, LangSelect, Meter, Modal } from '../components/ui.jsx';
++import { Icon, LangSelect, Meter, Modal, ParentGate } from '../components/ui.jsx';
+ import { CityMap } from '../art/CityMap.jsx';
+ import { BuildingThumb, COLORS } from '../art/BuildingArt.jsx';
+-import { Pip } from '../art/Characters.jsx';
++import { Kid, Pip } from '../art/Characters.jsx';
+ import { BUILDINGS, BUILDINGS_BY_ID, DECOS, PLOTS_BY_ID, TOTAL_BUILDINGS } from '../data/buildings.js';
+ import { MISSIONS, MISSIONS_BY_ID } from '../data/missions.js';
+ import { loc, sup } from '../data/i18n.js';
+@@ -11,7 +11,7 @@ import { levelOf, missionStatus, openMissionCount, permitsOf, placedCount, place
+ 
+ const BUILD_MS = 1700;
+ 
+-export function City({ state, dispatch, t, lang, go, initialBuild, onPractice }) {
++export function City({ state, dispatch, t, lang, go, player, initialBuild, onPractice }) {
+   const placed = placedMap(state);
+   const n = placedCount(state);
+   const permits = permitsOf(state);
+@@ -94,6 +94,10 @@ export function City({ state, dispatch, t, lang, go, initialBuild, onPractice })
+           <span className="brandmark" aria-hidden="true"><i /><i /><i /></span>
+           <span className="brandname">Little City Makers</span>
+         </button>
++        <button type="button" className="btn small player-chip" onClick={() => go('welcome')} aria-label={`${t('switchPlayer')}: ${player?.nick || ''}`}>
++          {player && <Kid id={player.avatar} size={30} />}
++          <span className="hide-s">{player?.nick}</span>
++        </button>
+         <div className="levelbox">
+           <b>{t('lv' + level)}</b>
+           <Meter value={n} max={TOTAL_BUILDINGS} label={t('cityGrowth')} />
+@@ -221,26 +225,3 @@ function BuildingPanel({ plotId, state, dispatch, t, lang, onClose, onPractice,
+     </Modal>
+   );
+ }
+-
+-// A light gate so small children do not wander into the grown-up area. It is not a security feature.
+-function ParentGate({ t, onClose, onPass }) {
+-  const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
+-  const [val, setVal] = useState('');
+-  const [wrong, setWrong] = useState(false);
+-  const submit = (e) => {
+-    e.preventDefault();
+-    if (Number(val) === q.a * q.b) onPass(); else setWrong(true);
+-  };
+-  return (
+-    <Modal title={t('grownups')} onClose={onClose} closeLabel={t('close')}>
+-      <form className="gate" onSubmit={submit}>
+-        <label htmlFor="gate-answer">{t('gateQ', q)}</label>
+-        <div className="row">
+-          <input id="gate-answer" type="text" inputMode="numeric" autoComplete="off" value={val} onChange={(e) => { setVal(e.target.value); setWrong(false); }} />
+-          <button type="submit" className="btn primary">{t('open')}</button>
+-        </div>
+-        {wrong && <p className="gentle" role="alert">{t('gateWrong')}</p>}
+-      </form>
+-    </Modal>
+-  );
+-}
+diff --git a/src/screens/Pages.jsx b/src/screens/Pages.jsx
+index a87889c..449196f 100644
+--- a/src/screens/Pages.jsx
++++ b/src/screens/Pages.jsx
+@@ -1,13 +1,13 @@
+ // Screen 1 (Welcome), Screen 3 (Mission Center), Screen 7 (Achievements), Screen 8 (Parent Dashboard).
+ import React, { useState } from 'react';
+-import { Icon, Meter, TopBar } from '../components/ui.jsx';
++import { Icon, Meter, Modal, ParentGate, TopBar } from '../components/ui.jsx';
+ import { CityMap } from '../art/CityMap.jsx';
+ import { BuildingThumb } from '../art/BuildingArt.jsx';
+-import { Pip } from '../art/Characters.jsx';
++import { KIDS, Kid, Pip } from '../art/Characters.jsx';
+ import { BUILDINGS, BUILDINGS_BY_ID, TOTAL_BUILDINGS } from '../data/buildings.js';
+ import { MISSIONS } from '../data/missions.js';
+ import { LANGS, loc, sup } from '../data/i18n.js';
+-import { levelOf, milestones, missionStatus, placedCount, placedMap } from '../state/store.js';
++import { MAX_PLAYERS, NICK_MAX, levelOf, milestones, missionStatus, newId, placedCount, placedMap } from '../state/store.js';
+ 
+ const Sup = ({ text, lang }) => (text ? <p className="sup" lang={lang}>{text}</p> : null);
+ 
+@@ -17,9 +17,54 @@ const DEMO_PLOTS = {
+ };
+ 
+ // ---------- Screen 1 ----------
+-export function Welcome({ state, dispatch, t, lang, go }) {
+-  const [mode, setMode] = useState(state.mode);
+-  const begin = () => { dispatch({ type: 'START', lang, mode }); go('city'); };
++const AVATARS = Object.keys(KIDS);
++
++function NewPlayer({ t, canCancel, onCancel, onCreate }) {
++  const [nick, setNick] = useState('');
++  const [avatar, setAvatar] = useState(AVATARS[0]);
++  const [mode, setMode] = useState('little');
++  const submit = (e) => { e.preventDefault(); onCreate({ nick, avatar, mode }); };
++  return (
++    <form className="newplayer" onSubmit={submit}>
++      <div className="field">
++        <label htmlFor="nick-input">{t('nickname')}</label>
++        <input id="nick-input" type="text" value={nick} maxLength={NICK_MAX} placeholder={t('nickHint')}
++          autoComplete="off" autoCapitalize="words" spellCheck="false" onChange={(e) => setNick(e.target.value)} />
++        <p className="fine left">{t('nickNote')}</p>
++      </div>
++      <fieldset className="pick">
++        <legend>{t('pickAvatar')}</legend>
++        <div className="avatars">
++          {AVATARS.map((id) => (
++            <button type="button" key={id} className={id === avatar ? 'avatar on' : 'avatar'} aria-pressed={id === avatar} onClick={() => setAvatar(id)}><Kid id={id} size={56} /></button>
++          ))}
++        </div>
++      </fieldset>
++      <fieldset className="pick">
++        <legend>{t('chooseAge')}</legend>
++        <div className="ages">
++          {['little', 'junior'].map((m) => (
++            <button type="button" key={m} className={m === mode ? `agecard ${m} on` : `agecard ${m}`} aria-pressed={m === mode} onClick={() => setMode(m)}>
++              <b>{t(m)}</b>
++              <span className="agetag">{t(m + 'Age')}</span>
++              <small>{t(m + 'Desc')}</small>
++            </button>
++          ))}
++        </div>
++      </fieldset>
++      <button type="submit" className="btn primary big wide"><Icon name="hammer" />{t('start')}</button>
++      {canCancel && <button type="button" className="btn wide" onClick={onCancel}>{t('cancel')}</button>}
++    </form>
++  );
++}
++
++export function Welcome({ profiles, activeId, dispatch, t, lang, go }) {
++  const [creating, setCreating] = useState(false);
++  const [del, setDel] = useState(null); // { id, ok }: ok turns true once the grown-up check is passed
++  const showForm = creating || profiles.length === 0;
++  const target = del && profiles.find((p) => p.id === del.id);
++  const play = (id) => { dispatch({ type: 'PROFILE_SELECT', id }); go('city'); };
++  const create = (v) => { dispatch({ type: 'PROFILE_ADD', id: newId(), now: Date.now(), ...v }); setCreating(false); go('city'); };
+   return (
+     <div className="screen welcome">
+       <div className="welcome-art"><CityMap plots={DEMO_PLOTS} demo title="Little City Makers" /></div>
+@@ -41,21 +86,45 @@ export function Welcome({ state, dispatch, t, lang, go }) {
+           </div>
+         </fieldset>
+ 
+-        <fieldset className="pick">
+-          <legend>{t('chooseAge')}</legend>
+-          <div className="ages">
+-            {['little', 'junior'].map((m) => (
+-              <button type="button" key={m} className={m === mode ? `agecard ${m} on` : `agecard ${m}`} aria-pressed={m === mode} onClick={() => setMode(m)}>
+-                <b>{t(m)}</b>
+-                <span className="agetag">{t(m + 'Age')}</span>
+-                <small>{t(m + 'Desc')}</small>
+-              </button>
+-            ))}
+-          </div>
+-        </fieldset>
+-
+-        <button type="button" className="btn primary big wide" onClick={begin}><Icon name="hammer" />{state.started ? t('continue') : t('start')}</button>
++        {showForm ? (
++          <NewPlayer t={t} canCancel={profiles.length > 0} onCancel={() => setCreating(false)} onCreate={create} />
++        ) : (
++          <>
++            <fieldset className="pick">
++              <legend>{t('whoPlays')}</legend>
++              <ul className="players">
++                {profiles.map((p) => (
++                  <li key={p.id} className="player">
++                    <button type="button" className={p.id === activeId ? 'playerbtn last' : 'playerbtn'} onClick={() => play(p.id)}>
++                      <Kid id={p.avatar} size={52} />
++                      <span>
++                        <b>{p.nick}</b>
++                        <small>{t('buildingsCount', { n: placedCount(p.game), total: TOTAL_BUILDINGS })} · {t(p.game.mode)}{p.id === activeId ? ` · ${t('lastPlayed')}` : ''}</small>
++                      </span>
++                    </button>
++                    <button type="button" className="round" onClick={() => setDel({ id: p.id, ok: false })} aria-label={t('removePlayer', { name: p.nick })}><Icon name="trash" size={20} /></button>
++                  </li>
++                ))}
++              </ul>
++            </fieldset>
++            {profiles.length < MAX_PLAYERS
++              ? <button type="button" className="btn big wide" onClick={() => setCreating(true)}><Icon name="plus" />{t('newPlayer')}</button>
++              : <p className="fine">{t('playersFull')}</p>}
++            <p className="fine">{t('keepNote')}</p>
++          </>
++        )}
+         <p className="fine">{t('privacy')}</p>
++
++        {target && !del.ok && <ParentGate t={t} onClose={() => setDel(null)} onPass={() => setDel({ id: del.id, ok: true })} />}
++        {target && del.ok && (
++          <Modal title={t('removePlayer', { name: target.nick })} onClose={() => setDel(null)} closeLabel={t('close')}>
++            <p>{t('removeAsk', { name: target.nick })}</p>
++            <div className="row">
++              <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'PROFILE_DELETE', id: del.id }); setDel(null); }}>{t('removeYes')}</button>
++              <button type="button" className="btn" onClick={() => setDel(null)}>{t('cancel')}</button>
++            </div>
++          </Modal>
++        )}
+       </main>
+     </div>
+   );
+@@ -187,7 +256,7 @@ function SkillRows({ keys, skills, t }) {
+   );
+ }
+ 
+-export function Parent({ state, dispatch, t, lang, go, saved }) {
++export function Parent({ state, dispatch, t, lang, go, saved, player }) {
+   const [ask, setAsk] = useState(false);
+   const done = MISSIONS.filter((m) => state.missions[m.id]);
+   const words = [...new Map(done.flatMap((m) => m.vocab).map((w) => [w.w, w])).values()];
+@@ -197,7 +266,7 @@ export function Parent({ state, dispatch, t, lang, go, saved }) {
+       <TopBar title={t('parentTitle')} onBack={() => go('city')} backLabel={t('city')} />
+       <main className="page">
+         <section className="sheet">
+-          <h2>{t('overview')}</h2>
++          <h2>{t('overview')}{player ? ` · ${player.nick}` : ''}</h2>
+           <div className="stats">
+             <div><b>{done.length}/{MISSIONS.length}</b><span>{t('missionsDone')}</span></div>
+             <div><b>{n}/{TOTAL_BUILDINGS}</b><span>{t('cityGrowth')}: {t('lv' + levelOf(n))}</span></div>
+@@ -245,7 +314,7 @@ export function Parent({ state, dispatch, t, lang, go, saved }) {
+             <div className="confirm" role="alertdialog" aria-label={t('reset')}>
+               <p>{t('resetAsk')}</p>
+               <div className="row">
+-                <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'RESET' }); go('welcome'); }}>{t('resetYes')}</button>
++                <button type="button" className="btn danger" onClick={() => { dispatch({ type: 'RESET' }); go('city'); }}>{t('resetYes')}</button>
+                 <button type="button" className="btn" onClick={() => setAsk(false)}>{t('cancel')}</button>
+               </div>
+             </div>
+diff --git a/src/state/store.js b/src/state/store.js
+index 61b0fa8..7024900 100644
+--- a/src/state/store.js
++++ b/src/state/store.js
+@@ -1,39 +1,66 @@
+-// Game state: one plain JSON object, a reducer, local persistence and derived selectors.
++// Game state, in two layers.
++//   root: { v: 2, lang, active, profiles: [{ id, nick, avatar, created, game }] }   saved in localStorage
++//   game: one player's progress (plain JSON): { mode, missions, plots, practice, skills }
++// Players are local profiles on one device. There are no accounts, no passwords and no server.
+ import { BUILDINGS, TOTAL_BUILDINGS } from '../data/buildings.js';
+ import { MISSIONS } from '../data/missions.js';
+ 
+-const KEY = 'little-city-makers.v1';
++const KEY = 'little-city-makers.v2';
++const OLD_KEY = 'little-city-makers.v1'; // single-player saves from the first prototype are migrated
+ 
+-export const fresh = () => ({
+-  v: 1,
+-  started: false,
+-  lang: 'en',
+-  mode: 'little',   // 'little' (4–6) | 'junior' (7–10)
++export const MAX_PLAYERS = 8;
++export const NICK_MAX = 14;
++
++export const fresh = (mode = 'little') => ({
++  mode,             // 'little' (4–6) | 'junior' (7–10)
+   missions: {},     // missionId -> { plays }
+   plots: {},        // plotId -> { b: buildingId, c?: colorIndex, d?: decoId }
+   practice: {},     // buildingId -> times practised inside the building
+   skills: {},       // skillKey -> activities completed
+ });
++export const freshRoot = () => ({ v: 2, lang: 'en', active: null, profiles: [] });
++
++export const newId = () => 'p' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
++// eslint-disable-next-line no-control-regex
++export const cleanNick = (s) => String(s || '').replace(/[\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, NICK_MAX);
+ 
+-// Returns { state, ok }. ok=false means this browser refuses storage; the UI says so honestly.
++// Returns { root, ok }. ok=false means this browser refuses storage; the UI says so honestly.
+ export function load() {
+   try {
+     const raw = localStorage.getItem(KEY);
+     if (raw) {
+-      const s = JSON.parse(raw);
+-      if (s && s.v === 1) return { state: { ...fresh(), ...s }, ok: true };
++      const r = JSON.parse(raw);
++      if (r && r.v === 2 && Array.isArray(r.profiles)) {
++        const profiles = r.profiles.map((p) => ({ ...p, game: { ...fresh(), ...p.game } }));
++        const active = profiles.some((p) => p.id === r.active) ? r.active : null;
++        return { root: { ...freshRoot(), ...r, profiles, active }, ok: true };
++      }
++    }
++    const root = freshRoot();
++    const old = localStorage.getItem(OLD_KEY);
++    if (old) {
++      const s = JSON.parse(old);
++      if (s && s.v === 1 && (s.started || Object.keys(s.missions || {}).length)) {
++        const id = newId();
++        root.lang = s.lang || 'en';
++        root.active = id;
++        root.profiles = [{
++          id, nick: 'Player 1', avatar: 'mai', created: Date.now(),
++          game: { ...fresh(s.mode), missions: s.missions || {}, plots: s.plots || {}, practice: s.practice || {}, skills: s.skills || {} },
++        }];
++      }
+     }
+     localStorage.setItem(KEY + '.probe', '1');
+     localStorage.removeItem(KEY + '.probe');
+-    return { state: fresh(), ok: true };
++    return { root, ok: true };
+   } catch {
+-    return { state: fresh(), ok: false };
++    return { root: freshRoot(), ok: false };
+   }
+ }
+ 
+-export function save(state) {
++export function save(root) {
+   try {
+-    localStorage.setItem(KEY, JSON.stringify(state));
++    localStorage.setItem(KEY, JSON.stringify(root));
+     return true;
+   } catch {
+     return false;
+@@ -46,12 +73,9 @@ const addSkills = (a, b = {}) => {
+   return out;
+ };
+ 
+-export function reducer(s, a) {
++// One player's game.
++export function gameReducer(s, a) {
+   switch (a.type) {
+-    case 'START':
+-      return { ...s, started: true, lang: a.lang, mode: a.mode };
+-    case 'LANG':
+-      return { ...s, lang: a.lang };
+     case 'MODE':
+       return { ...s, mode: a.mode };
+     case 'MISSION_DONE':
+@@ -71,14 +95,35 @@ export function reducer(s, a) {
+     case 'DECORATE':
+       if (!s.plots[a.plot]) return s;
+       return { ...s, plots: { ...s.plots, [a.plot]: { ...s.plots[a.plot], ...a.patch } } };
+-    case 'RESET':
+-      return { ...fresh(), lang: s.lang };
++    case 'RESET': // erase this player's progress, keep the player
++      return fresh(s.mode);
+     default:
+       return s;
+   }
+ }
+ 
+-// ---- selectors ----
++// Whole device: language, the list of players, who is active. Game actions go to the active player.
++export function rootReducer(r, a) {
++  switch (a.type) {
++    case 'LANG':
++      return { ...r, lang: a.lang };
++    case 'PROFILE_ADD': {
++      if (r.profiles.length >= MAX_PLAYERS) return r;
++      const nick = cleanNick(a.nick) || `Maker ${r.profiles.length + 1}`;
++      const p = { id: a.id, nick, avatar: a.avatar, created: a.now, game: fresh(a.mode) };
++      return { ...r, active: p.id, profiles: [...r.profiles, p] };
++    }
++    case 'PROFILE_SELECT':
++      return r.profiles.some((p) => p.id === a.id) ? { ...r, active: a.id } : r;
++    case 'PROFILE_DELETE':
++      return { ...r, profiles: r.profiles.filter((p) => p.id !== a.id), active: r.active === a.id ? null : r.active };
++    default:
++      if (!r.active) return r;
++      return { ...r, profiles: r.profiles.map((p) => (p.id === r.active ? { ...p, game: gameReducer(p.game, a) } : p)) };
++  }
++}
++
++// ---- selectors (take one player's game) ----
+ export const placedMap = (s) => Object.fromEntries(Object.entries(s.plots).map(([plot, v]) => [v.b, plot]));
+ export const placedCount = (s) => Object.keys(s.plots).length;
+ export const permitsOf = (s) => {
+diff --git a/src/styles.css b/src/styles.css
+index 6a4ae04..38abaee 100644
+--- a/src/styles.css
++++ b/src/styles.css
+@@ -108,6 +108,20 @@ button:disabled { cursor: default; }
+ .agecard.junior .agetag { background: var(--lav); }
+ .agecard.on { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink); }
+ 
++/* ---------- players ---------- */
++.newplayer { display: flex; flex-direction: column; gap: 14px; }
++.avatars { display: flex; flex-wrap: wrap; gap: 8px; }
++.avatar { width: 66px; height: 66px; padding: 0; display: grid; place-items: center; border-radius: 50%; border: 3px solid var(--line); background: var(--sky-soft); }
++.avatar.on { border-color: var(--ink); box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--ink); }
++.players { display: flex; flex-direction: column; gap: 8px; }
++.player { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
++.playerbtn { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 6px 12px; border-radius: var(--r); border: 3px solid var(--line); background: var(--white); text-align: left; min-width: 0; }
++.playerbtn.last { border-color: var(--butter-deep); background: #fff6d6; }
++.playerbtn span { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
++.playerbtn b { font: 800 1.15rem var(--display); overflow-wrap: anywhere; }
++.playerbtn small { color: var(--ink-soft); font-size: .78rem; font-weight: 700; }
++.player-chip { gap: 6px; padding-inline: .5em .8em; }
++
+ /* ---------- city ---------- */
+ .cityscreen { background: var(--sky-soft); overflow: hidden; position: relative; }
+ .cityscreen::before, .cityscreen::after { content: ""; position: absolute; background: var(--white); border-radius: 40px; opacity: .8; pointer-events: none; }
+@@ -182,8 +196,11 @@ button:disabled { cursor: default; }
+ .chip.sel { background: var(--ink); color: var(--white); border-color: var(--ink); }
+ .chip:disabled { background: #f6f1e6; }
+ .gate { display: flex; flex-direction: column; gap: 12px; }
+-.gate input, .cloze input { min-height: 52px; border-radius: 16px; border: 3px solid var(--line); background: var(--white); padding: 0 .6em; font-weight: 800; }
++.gate input, .cloze input, .field input { min-height: 52px; border-radius: 16px; border: 3px solid var(--line); background: var(--white); padding: 0 .6em; font-weight: 800; }
+ .gate input { width: 110px; font-size: 1.2rem; }
++.field { display: flex; flex-direction: column; gap: 6px; }
++.field label { font: 800 .95rem var(--display); color: var(--ink-soft); }
++.field input { width: 100%; font-size: 1.2rem; }
+ 
+ /* ---------- mission centre ---------- */
+ .progressline { display: flex; align-items: center; gap: 12px; font-size: .92rem; color: var(--ink-soft); }
+@@ -331,7 +348,8 @@ button.tile { min-height: 52px; min-width: 52px; padding: 0 .8em; border-radius:
+ }
+ @media (max-width: 560px) {
+   body { font-size: 16px; }
+-  .hide-s, .brandname { display: none; }
++  .hide-s, .brand { display: none; }
++  .player-chip { padding-inline: .4em; }
+   .hud { gap: 8px; padding: 8px 10px; flex-wrap: nowrap; }
+   .levelbox { min-width: 0; grid-template-columns: 1fr; }
+   .levelbox b { font-size: .88rem; line-height: 1.1; }
