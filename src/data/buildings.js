@@ -12,7 +12,7 @@ export const BUILDINGS = [
     learn: s('Food words and polite requests', 'Từ về đồ ăn và lời đề nghị lịch sự', '음식 단어와 공손한 부탁') },
   { id: 'cafe', cat: 'shop', mission: 'm-cafe', color: 2,
     name: s('Café', 'Quán cà phê', '카페'),
-    learn: s('Food and drink words and ordering politely', 'Từ về đồ ăn, thức uống và cách gọi món lịch sự', '음식·음료 단어와 공손하게 주문하기') },
+    learn: s('Food and drink words and ordering politely', 'Từ vựng về đồ ăn, thức uống và cách gọi món lịch sự', '음식·음료 단어와 공손하게 주문하기') },
   { id: 'library', cat: 'learn', mission: 'm-library', color: 4,
     name: s('Library', 'Thư viện', '도서관'),
     learn: s('Reading stories and caring for shared books', 'Đọc truyện và giữ gìn sách chung', '이야기 읽기와 함께 쓰는 책 아끼기') },

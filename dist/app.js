@@ -225,7 +225,7 @@
       mission: "m-cafe",
       color: 2,
       name: s2("Caf\xE9", "Qu\xE1n c\xE0 ph\xEA", "\uCE74\uD398"),
-      learn: s2("Food and drink words and ordering politely", "T\u1EEB v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 c\xE1ch g\u1ECDi m\xF3n l\u1ECBch s\u1EF1", "\uC74C\uC2DD\xB7\uC74C\uB8CC \uB2E8\uC5B4\uC640 \uACF5\uC190\uD558\uAC8C \uC8FC\uBB38\uD558\uAE30")
+      learn: s2("Food and drink words and ordering politely", "T\u1EEB v\u1EF1ng v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 c\xE1ch g\u1ECDi m\xF3n l\u1ECBch s\u1EF1", "\uC74C\uC2DD\xB7\uC74C\uB8CC \uB2E8\uC5B4\uC640 \uACF5\uC190\uD558\uAC8C \uC8FC\uBB38\uD558\uAE30")
     },
     {
       id: "library",
@@ -387,33 +387,33 @@
       needs: 1,
       skills: ["polite"],
       who: ["leo"],
-      title: s3("A Drink at the Caf\xE9", "M\u1ED9t ly n\u01B0\u1EDBc \u1EDF qu\xE1n c\xE0 ph\xEA", "\uCE74\uD398\uC5D0\uC11C \uB9C8\uC2E4 \uAC83 \uC8FC\uBB38\uD558\uAE30"),
-      objective: s3("Learn food and drink words and order with \u201CI would like\u2026\u201D.", "H\u1ECDc t\u1EEB v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 g\u1ECDi m\xF3n b\u1EB1ng \u201CI would like\u2026\u201D.", "\uC74C\uC2DD\uACFC \uC74C\uB8CC \uB2E8\uC5B4\uB97C \uBC30\uC6B0\uACE0 \u201CI would like\u2026\u201D\uB85C \uC8FC\uBB38\uD574\uC694."),
+      title: s3("Ordering at the Caf\xE9", "C\xE1ch g\u1ECDi n\u01B0\u1EDBc \u1EDF qu\xE1n c\xE0 ph\xEA", "\uCE74\uD398\uC5D0\uC11C \uB9C8\uC2E4 \uAC83 \uC8FC\uBB38\uD558\uAE30"),
+      objective: s3("Learn food and drink vocabulary and order with \u201CI would like\u2026\u201D.", "H\u1ECDc t\u1EEB v\u1EF1ng v\u1EC1 \u0111\u1ED3 \u0103n, th\u1EE9c u\u1ED1ng v\xE0 g\u1ECDi m\xF3n b\u1EB1ng \u201CI would like\u2026\u201D.", "\uC74C\uC2DD\uACFC \uC74C\uB8CC \uB2E8\uC5B4\uB97C \uBC30\uC6B0\uACE0 \u201CI would like\u2026\u201D\uB85C \uC8FC\uBB38\uD574\uC694."),
       scenario: s3("Leo is thirsty. He walks into the caf\xE9 to order a drink.", "Leo \u0111ang kh\xE1t n\u01B0\u1EDBc. B\u1EA1n \u1EA5y b\u01B0\u1EDBc v\xE0o qu\xE1n \u0111\u1EC3 g\u1ECDi \u0111\u1ED3 u\u1ED1ng.", "\uB808\uC624\uB294 \uBAA9\uC774 \uB9D0\uB77C\uC694. \uB9C8\uC2E4 \uAC83\uC744 \uC8FC\uBB38\uD558\uB7EC \uCE74\uD398\uC5D0 \uB4E4\uC5B4\uAC00\uC694."),
       lesson: s3("Saying \u201Cplease\u201D and \u201Cthank you\u201D helps people feel respected.", "N\xF3i \u201Cplease\u201D v\xE0 \u201Cthank you\u201D gi\xFAp m\u1ECDi ng\u01B0\u1EDDi c\u1EA3m th\u1EA5y \u0111\u01B0\u1EE3c t\xF4n tr\u1ECDng.", "\u201Cplease\u201D\uC640 \u201Cthank you\u201D\uB77C\uACE0 \uB9D0\uD558\uBA74 \uC11C\uB85C \uC874\uC911\uBC1B\uB294 \uB290\uB08C\uC774 \uB4E4\uC5B4\uC694."),
-      feedback: s3("Great ordering! You asked politely.", "G\u1ECDi m\xF3n gi\u1ECFi l\u1EAFm! B\u1EA1n \u0111\xE3 h\u1ECFi th\u1EADt l\u1ECBch s\u1EF1.", "\uC8FC\uBB38\uC744 \uC798\uD588\uC5B4\uC694! \uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD588\uC5B4\uC694."),
-      vocab: [v("juice", "\u{1F9C3}", "n\u01B0\u1EDBc \xE9p", "\uC8FC\uC2A4"), v("water", "\u{1F4A7}", "n\u01B0\u1EDBc", "\uBB3C"), v("sandwich", "\u{1F96A}", "b\xE1nh sandwich", "\uC0CC\uB4DC\uC704\uCE58"), v("soup", "\u{1F372}", "m\xF3n s\xFAp", "\uC218\uD504"), v("banana", "\u{1F34C}", "qu\u1EA3 chu\u1ED1i", "\uBC14\uB098\uB098")],
+      feedback: s3("Great ordering! You asked politely.", "G\u1ECDi m\xF3n gi\u1ECFi l\u1EAFm! B\u1EA1n \u0111\xE3 h\u1ECFi r\u1EA5t l\u1EC5 ph\xE9p.", "\uC8FC\uBB38\uC744 \uC798\uD588\uC5B4\uC694! \uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD588\uC5B4\uC694."),
+      vocab: [v("juice", "\u{1F9C3}", "n\u01B0\u1EDBc \xE9p", "\uC8FC\uC2A4"), v("water", "\u{1F4A7}", "n\u01B0\u1EDBc", "\uBB3C"), v("sandwich", "\u{1F96A}", "b\xE1nh sandwich", "\uC0CC\uB4DC\uC704\uCE58"), v("soup", "\u{1F372}", "s\xFAp", "\uC218\uD504"), v("banana", "\u{1F34C}", "qu\u1EA3 chu\u1ED1i", "\uBC14\uB098\uB098")],
       target: "I would like some juice, please.",
-      targetHelp: h("Cho m\xECnh m\u1ED9t \xEDt n\u01B0\u1EDBc \xE9p \u1EA1.", "\uC8FC\uC2A4 \uC880 \uC8FC\uC138\uC694."),
+      targetHelp: h("Cho con m\u1ED9t ly n\u01B0\u1EDBc \xE9p \u1EA1.", "\uC8FC\uC2A4 \uC880 \uC8FC\uC138\uC694."),
       steps: {
         little: [
-          { t: "pick", q: "Leo is thirsty. Tap the juice.", h: h("Leo \u0111ang kh\xE1t. H\xE3y ch\u1EA1m v\xE0o n\u01B0\u1EDBc \xE9p.", "\uB808\uC624\uB294 \uBAA9\uC774 \uB9D0\uB77C\uC694. \uC8FC\uC2A4\uB97C \uB20C\uB7EC\uC694."), opts: ["juice", "soup", "banana"], a: "juice" },
-          { t: "pick", q: "Now Leo is hungry. Tap the sandwich.", h: h("B\xE2y gi\u1EDD Leo \u0111\xF3i b\u1EE5ng. H\xE3y ch\u1EA1m v\xE0o b\xE1nh sandwich.", "\uC774\uBC88\uC5D0\uB294 \uB808\uC624\uAC00 \uBC30\uACE0\uD30C\uC694. \uC0CC\uB4DC\uC704\uCE58\uB97C \uB20C\uB7EC\uC694."), opts: ["water", "sandwich", "juice"], a: "sandwich" },
-          { t: "order", q: "Ask politely.", h: h("H\xE3y h\u1ECFi th\u1EADt l\u1ECBch s\u1EF1.", "\uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD574\uC694."), words: ["I would like", "some juice,", "please."] },
+          { t: "pick", q: "Leo is thirsty. Tap the juice.", h: h("Leo \u0111ang kh\xE1t. H\xE3y gi\xFAp b\u1EA1n \u1EA5y t\xECm ly n\u01B0\u1EDBc \xE9p nh\xE9.", "\uB808\uC624\uB294 \uBAA9\uC774 \uB9D0\uB77C\uC694. \uC8FC\uC2A4\uB97C \uB20C\uB7EC\uC8FC\uC138\uC694."), opts: ["juice", "soup", "banana"], a: "juice" },
+          { t: "pick", q: "Now Leo is hungry. Tap the sandwich.", h: h("B\xE2y gi\u1EDD Leo \u0111\xF3i b\u1EE5ng. H\xE3y gi\xFAp b\u1EA1n ch\u1ECDn b\xE1nh sandwich nh\xE9.", "\uC774\uBC88\uC5D0\uB294 \uB808\uC624\uAC00 \uBC30\uACE0\uD30C\uC694. \uC0CC\uB4DC\uC704\uCE58\uB97C \uB20C\uB7EC \uC8FC\uC138\uC694."), opts: ["water", "sandwich", "juice"], a: "sandwich" },
+          { t: "order", q: "Ask politely.", h: h("H\xE3y h\u1ECFi th\u1EADt l\u1EC5 ph\xE9p nh\xE9.", "\uACF5\uC190\uD558\uAC8C \uBD80\uD0C1\uD574\uC694."), words: ["I would like", "some juice,", "please."] },
           { t: "say", s: "I would like some juice, please." }
         ],
         junior: [
           { t: "pick", q: "Leo says, \u201CI would like some soup, please.\u201D What does he want?", h: h("Leo mu\u1ED1n g\u1ECDi g\xEC?", "\uB808\uC624\uB294 \uBB34\uC5C7\uC744 \uC6D0\uD558\uB098\uC694?"), opts: ["soup", "water", "banana"], a: "soup" },
-          { t: "order", q: "Build the polite sentence.", h: h("S\u1EAFp x\u1EBFp th\xE0nh c\xE2u l\u1ECBch s\u1EF1.", "\uACF5\uC190\uD55C \uBB38\uC7A5\uC744 \uB9CC\uB4E4\uC5B4\uC694."), words: ["I", "would", "like", "some", "juice,", "please."] },
+          { t: "order", q: "Build the polite sentence.", h: h("S\u1EAFp x\u1EBFp th\xE0nh c\xE2u ho\xE0n ch\u1EC9nh.", "\uC54C\uB9DE\uC740 \uBB38\uC7A5\uC744 \uB9CC\uB4E4\uC5B4 \uBCF4\uC138\uC694."), words: ["I", "would", "like", "some", "juice,", "please."] },
           { t: "type", pic: "\u{1F96A}", pre: "I would like a", post: ", please.", a: "sandwich" },
           {
             t: "choice",
             who: ["leo"],
             story: s3("Leo is at the caf\xE9 counter. He wants some water. What can he say?", "Leo \u0111ang \u1EDF qu\u1EA7y c\u1EE7a qu\xE1n. B\u1EA1n \u1EA5y mu\u1ED1n u\u1ED1ng n\u01B0\u1EDBc. B\u1EA1n \u1EA5y c\xF3 th\u1EC3 n\xF3i g\xEC?", "\uB808\uC624\uAC00 \uCE74\uD398 \uCE74\uC6B4\uD130\uC5D0 \uC788\uC5B4\uC694. \uBB3C\uC744 \uB9C8\uC2DC\uACE0 \uC2F6\uC5B4\uC694. \uBB50\uB77C\uACE0 \uB9D0\uD560 \uC218 \uC788\uC744\uAE4C\uC694?"),
             opts: [
-              { l: "I would like some water, please.", good: true, out: s3("The server smiles and brings the water. \u201CHere you are!\u201D", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 m\u1EC9m c\u01B0\u1EDDi v\xE0 mang n\u01B0\u1EDBc ra. \u201CC\u1EE7a b\u1EA1n \u0111\xE2y!\u201D", "\uC9C1\uC6D0\uC774 \uC6C3\uC73C\uBA70 \uBB3C\uC744 \uAC00\uC838\uB2E4\uC918\uC694. \u201C\uC5EC\uAE30 \uC788\uC5B4\uC694!\u201D") },
+              { l: "I would like some water, please.", good: true, out: s3("The server smiles and brings the water. \u201CHere you are!\u201D", "Nh\xE2n vi\xEAn ph\u1EE5c v\u1EE5 m\u1EC9m c\u01B0\u1EDDi v\xE0 mang n\u01B0\u1EDBc ra. \u201CC\u1EE7a con \u0111\xE2y!\u201D", "\uC9C1\uC6D0\uC774 \uC6C3\uC73C\uBA70 \uBB3C\uC744 \uAC00\uC838\uB2E4\uC918\uC694. \u201C\uC5EC\uAE30 \uC788\uC5B4\uC694!\u201D") },
               { l: "Give me water. Now!", good: false, out: s3("The server feels unhappy because the words are not kind. Let\u2019s try another idea.", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 th\u1EA5y kh\xF4ng vui v\xEC l\u1EDDi n\xF3i ch\u01B0a nh\u1EB9 nh\xE0ng. M\xECnh th\u1EED \xFD kh\xE1c nh\xE9.", "\uB9D0\uC774 \uB2E4\uC815\uD558\uC9C0 \uC54A\uC544\uC11C \uC9C1\uC6D0\uC774 \uC18D\uC0C1\uD574\uC694. \uB2E4\uB978 \uBC29\uBC95\uC744 \uC0DD\uAC01\uD574 \uBD10\uC694.") },
-              { l: "Can I have some water, please?", good: true, out: s3("\u201COf course!\u201D says the server. Asking nicely works.", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 n\xF3i: \u201CT\u1EA5t nhi\xEAn r\u1ED3i!\u201D H\u1ECFi nh\u1EB9 nh\xE0ng th\u1EADt hi\u1EC7u qu\u1EA3.", "\uC9C1\uC6D0\uC774 \uB9D0\uD574\uC694. \u201C\uBB3C\uB860\uC774\uC8E0!\u201D \uB2E4\uC815\uD558\uAC8C \uBD80\uD0C1\uD558\uB2C8 \uD1B5\uD588\uC5B4\uC694.") }
+              { l: "Can I have some water, please?", good: true, out: s3("\u201COf course!\u201D says the server. Asking nicely works.", "Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 n\xF3i: \u201CT\u1EA5t nhi\xEAn r\u1ED3i!\u201D H\u1ECFi nh\u1EB9 nh\xE0ng th\u1EADt t\u1ED1t \u0111\xFAng kh\xF4ng n\xE0o?", "\uC9C1\uC6D0\uC774 \uB9D0\uD574\uC694. \u201C\uBB3C\uB860\uC774\uC8E0!\u201D \uB2E4\uC815\uD558\uAC8C \uBD80\uD0C1\uD558\uB2C8 \uD1B5\uD588\uC5B4\uC694.") }
             ]
           },
           { t: "pick", q: "The server gives Leo his water. What can Leo say?", h: h("Ng\u01B0\u1EDDi ph\u1EE5c v\u1EE5 \u0111\u01B0a n\u01B0\u1EDBc cho Leo. Leo c\xF3 th\u1EC3 n\xF3i g\xEC?", "\uC9C1\uC6D0\uC774 \uB808\uC624\uC5D0\uAC8C \uBB3C\uC744 \uC918\uC694. \uB808\uC624\uB294 \uBB50\uB77C\uACE0 \uB9D0\uD560\uAE4C\uC694?"), opts: ["Thank you!", "Give me more.", "I do not like it."], a: "Thank you!" },
