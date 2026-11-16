@@ -42,4 +42,4 @@ Open `dist/index.html` in a browser. React 18 is loaded from a CDN in this proto
 - Content was written for this prototype and still needs review by teachers and by
   Vietnamese and Korean cultural reviewers before use with children.
 - The parent gate (a multiplication question) keeps small children out; it is not security.
-- 10 of the 23 buildings in the product concept are built. The rest need missions and art.
+- 11 of the 23 buildings in the product concept are built. The rest need missions and art.

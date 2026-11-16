@@ -120,6 +120,23 @@ const ART = {
       </>
     );
   },
+  cafe: (c) => {
+    const f = [0.2, 0.25, 0.9, 0.85];
+    return (
+      <>
+        <Box f={f} h={38} c={c} />
+        <Face side="L" f={f}>
+          <Door u={52} />
+          <rect x="6" y="5" width="38" height="20" rx="2" fill={TRIM} />
+          <rect x="8" y="7" width="34" height="16" fill={WIN} />
+          {[0, 1, 2, 3, 4, 5, 6].map((k) => <rect key={k} x={k * 10} y="28" width="10" height="8" fill={k % 2 ? TRIM : '#6FB5E8'} />)}
+        </Face>
+        <Face side="R" f={f}><Win u={23} v={12} /></Face>
+        <Box f={[0.3, 0.35, 0.8, 0.75]} z={38} h={5} c={shade(c, 0.35)} />
+        <Sign at={[0.9, 0.85, 38]} e="☕" />
+      </>
+    );
+  },
   library: (c) => {
     const f = [0.15, 0.2, 0.95, 0.9];
     return (

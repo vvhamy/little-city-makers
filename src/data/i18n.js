@@ -149,7 +149,7 @@ export const UI = {
   ms_culture: s('Culture Explorer', 'Nhà khám phá văn hóa', '문화 탐험가'),
   ms_helper: s('Community Helper', 'Người giúp cộng đồng', '마을 도우미'),
   ms_town: s('Town Maker (5 buildings)', 'Người xây thị trấn (5 công trình)', '동네 건축가 (건물 5개)'),
-  ms_cityMaker: s('City Maker (10 buildings)', 'Người kiến tạo thành phố (10 công trình)', '도시 건축가 (건물 10개)'),
+  ms_cityMaker: s('City Maker (11 buildings)', 'Người kiến tạo thành phố (11 công trình)', '도시 건축가 (건물 11개)'),
 
   parentTitle: s('Parent Dashboard', 'Bảng theo dõi dành cho phụ huynh', '보호자 대시보드'),
   gateQ: s('Grown-ups only. What is {a} × {b}?', 'Chỉ dành cho người lớn. {a} × {b} bằng bao nhiêu?', '보호자 전용입니다. {a} × {b}는 얼마인가요?'),
