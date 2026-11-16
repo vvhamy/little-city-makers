@@ -47,6 +47,8 @@
     city: s("City", "Th\xE0nh ph\u1ED1", "\uB3C4\uC2DC"),
     back: s("Back", "Quay l\u1EA1i", "\uB4A4\uB85C"),
     close: s("Close", "\u0110\xF3ng", "\uB2EB\uAE30"),
+    musicOff: s("Turn music off", "T\u1EAFt nh\u1EA1c", "\uC74C\uC545 \uB044\uAE30"),
+    musicOn: s("Turn music on", "B\u1EADt nh\u1EA1c", "\uC74C\uC545 \uCF1C\uAE30"),
     cancel: s("Cancel", "H\u1EE7y", "\uCDE8\uC18C"),
     done: s("Done", "Xong", "\uC644\uB8CC"),
     letsGo: s("Let's go", "B\u1EAFt \u0111\u1EA7u th\xF4i", "\uC2DC\uC791\uD558\uAE30"),
@@ -962,6 +964,197 @@
     ];
   }
 
+  // src/audio/music.js
+  var KEY2 = "little-city-makers.audio";
+  var LEVEL = 0.07;
+  var DUCKED = 0.35;
+  var BPM = 76;
+  var BEAT = 60 / BPM;
+  var BARS = [
+    { bass: 48, pad: [60, 64, 67, 71], mel: [72, 74, 76, 79, 81] },
+    // Cmaj7
+    { bass: 45, pad: [57, 60, 64, 67], mel: [69, 72, 74, 76, 79] },
+    // Am7
+    { bass: 41, pad: [57, 60, 64, 65], mel: [72, 74, 76, 77, 81] },
+    // Fmaj7
+    { bass: 43, pad: [59, 62, 65, 67], mel: [71, 74, 76, 79, 81] }
+    // G6/9
+  ];
+  var hz = (m) => 440 * Math.pow(2, (m - 69) / 12);
+  var AC = typeof window !== "undefined" ? window.AudioContext || window.webkitAudioContext : null;
+  var musicSupported = !!AC;
+  var enabled = readPref();
+  var ctx = null;
+  var master = null;
+  var timer = null;
+  var nextBarTime = 0;
+  var bar = 0;
+  var lastMel = 2;
+  var ducked = false;
+  var listeners = /* @__PURE__ */ new Set();
+  function readPref() {
+    try {
+      const v2 = JSON.parse(localStorage.getItem(KEY2) || "{}");
+      return v2.music !== false;
+    } catch {
+      return true;
+    }
+  }
+  function writePref() {
+    try {
+      localStorage.setItem(KEY2, JSON.stringify({ music: enabled }));
+    } catch {
+    }
+  }
+  var emit = () => listeners.forEach((f) => f(enabled));
+  var musicEnabled = () => enabled;
+  function subscribeMusic(f) {
+    listeners.add(f);
+    return () => listeners.delete(f);
+  }
+  function target() {
+    return enabled ? LEVEL * (ducked ? DUCKED : 1) : 0;
+  }
+  function ramp(seconds) {
+    if (!ctx || !master) return;
+    const t = ctx.currentTime;
+    master.gain.cancelScheduledValues(t);
+    master.gain.setValueAtTime(master.gain.value, t);
+    master.gain.linearRampToValueAtTime(target(), t + seconds);
+  }
+  function note(when, midi, len, vol, type = "sine", partial = 0) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(1e-4, when);
+    g.gain.exponentialRampToValueAtTime(vol, when + 0.03);
+    g.gain.exponentialRampToValueAtTime(1e-4, when + len);
+    g.connect(master);
+    const o = ctx.createOscillator();
+    o.type = type;
+    o.frequency.value = hz(midi);
+    o.connect(g);
+    o.start(when);
+    o.stop(when + len + 0.05);
+    if (partial) {
+      const h2 = ctx.createOscillator();
+      const hg = ctx.createGain();
+      hg.gain.value = partial;
+      h2.frequency.value = hz(midi + 12);
+      h2.connect(hg).connect(g);
+      h2.start(when);
+      h2.stop(when + len + 0.05);
+    }
+  }
+  function pad(when, midi, len, vol) {
+    const g = ctx.createGain();
+    g.gain.setValueAtTime(1e-4, when);
+    g.gain.linearRampToValueAtTime(vol, when + len * 0.4);
+    g.gain.linearRampToValueAtTime(1e-4, when + len);
+    g.connect(master);
+    for (const detune of [-5, 5]) {
+      const o = ctx.createOscillator();
+      o.type = "triangle";
+      o.frequency.value = hz(midi);
+      o.detune.value = detune;
+      o.connect(g);
+      o.start(when);
+      o.stop(when + len + 0.05);
+    }
+  }
+  function scheduleBar(when) {
+    const b = BARS[bar % BARS.length];
+    const len = BEAT * 4;
+    b.pad.forEach((m) => pad(when, m, len * 1.1, 0.16));
+    note(when, b.bass, BEAT * 3, 0.5);
+    for (let k = 0; k < 8; k++) {
+      if (Math.random() < 0.45) continue;
+      lastMel = Math.max(0, Math.min(b.mel.length - 1, lastMel + Math.floor(Math.random() * 3) - 1));
+      note(when + k * BEAT * 0.5, b.mel[lastMel], BEAT * 1.6, 0.34, "sine", 0.12);
+    }
+    bar++;
+  }
+  function tick() {
+    if (!ctx || ctx.state !== "running") return;
+    while (nextBarTime < ctx.currentTime + 1.2) {
+      scheduleBar(nextBarTime);
+      nextBarTime += BEAT * 4;
+    }
+  }
+  function ensure() {
+    if (ctx || !AC) return !!ctx;
+    try {
+      ctx = new AC();
+      const filter = ctx.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.value = 2400;
+      master = ctx.createGain();
+      master.gain.value = 0;
+      master.connect(filter).connect(ctx.destination);
+      nextBarTime = ctx.currentTime + 0.2;
+      timer = setInterval(tick, 300);
+      document.addEventListener("visibilitychange", () => {
+        if (!ctx) return;
+        if (document.hidden) ctx.suspend();
+        else if (enabled) ctx.resume();
+      });
+      return true;
+    } catch {
+      ctx = null;
+      return false;
+    }
+  }
+  function unlockMusic() {
+    if (!enabled || !musicSupported || !ensure()) return;
+    const go = () => {
+      nextBarTime = Math.max(nextBarTime, ctx.currentTime + 0.2);
+      ramp(3);
+    };
+    if (ctx.state === "suspended") ctx.resume().then(go).catch(() => {
+    });
+    else go();
+  }
+  function setMusic(on) {
+    enabled = !!on;
+    writePref();
+    if (enabled) unlockMusic();
+    else ramp(0.6);
+    emit();
+  }
+  function duckMusic(on) {
+    ducked = !!on;
+    ramp(0.25);
+  }
+
+  // src/audio/voice.js
+  var SOFT = /(samantha|ava\b|allison|susan|karen|moira|tessa|serena|fiona|aria|jenny|sara|emma|zira|joanna|salli|ivy|kendra|kimberly|google us english|google uk english female|female)/i;
+  var NATURAL = /(natural|neural|premium|enhanced|online)/i;
+  var HARSH = /(alex\b|fred|daniel|david|mark\b|george|ralph|albert|junior|kathy|male\b|espeak|compact|bad news|good news|bells|boing|bubbles|cellos|deranged|hysterical|organ|trinoids|whisper|zarvox|superstar|wobble|jester|bahh)/i;
+  function scoreVoice(v2) {
+    const lang = String(v2.lang || "").replace("_", "-").toLowerCase();
+    if (!lang.startsWith("en")) return -Infinity;
+    let s4 = 0;
+    if (lang === "en-us") s4 += 3;
+    else if (lang === "en-gb" || lang === "en-au" || lang === "en-ca") s4 += 2;
+    else s4 += 1;
+    if (SOFT.test(v2.name)) s4 += 4;
+    if (NATURAL.test(v2.name)) s4 += 3;
+    if (HARSH.test(v2.name)) s4 -= 8;
+    if (v2.localService === false) s4 += 0.5;
+    return s4;
+  }
+  function pickVoice(voices) {
+    let best = null;
+    let bestScore = -Infinity;
+    for (const v2 of voices || []) {
+      const s4 = scoreVoice(v2);
+      if (s4 > bestScore) {
+        best = v2;
+        bestScore = s4;
+      }
+    }
+    return bestScore === -Infinity ? null : best;
+  }
+  var VOICE = { rate: 0.8, pitch: 1.12, volume: 0.9 };
+
   // src/components/ui.jsx
   var PATHS = {
     back: "M15 5l-7 7 7 7",
@@ -981,23 +1174,56 @@
     mic: "M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v3",
     next: "M9 5l7 7-7 7",
     plus: "M12 5v14M5 12h14",
+    music: "M9 18V6l10-2v12M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0z",
+    musicoff: "M9 18V6l10-2v12M9 18a3 3 0 11-6 0 3 3 0 016 0zM19 16a3 3 0 11-6 0 3 3 0 016 0zM3 3l18 18",
     trash: "M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13M10 11v6M14 11v6"
   };
   function Icon({ name, size = 22 }) {
     return /* @__PURE__ */ react_default.createElement("svg", { className: "icon", viewBox: "0 0 24 24", width: size, height: size, fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("path", { d: PATHS[name] }));
   }
   var canSpeak = typeof window !== "undefined" && "speechSynthesis" in window && typeof window.SpeechSynthesisUtterance === "function";
+  var voice = null;
+  var choose = () => {
+    try {
+      voice = pickVoice(window.speechSynthesis.getVoices());
+    } catch {
+      voice = null;
+    }
+  };
+  if (canSpeak) {
+    choose();
+    try {
+      window.speechSynthesis.addEventListener("voiceschanged", choose);
+    } catch {
+    }
+  }
   function speak(text) {
     if (!canSpeak || !text) return;
     try {
       const clean = String(text).replace(/[^\p{L}\p{N}\p{P}\s]/gu, "").replace(/_+/g, " ");
       const u = new SpeechSynthesisUtterance(clean);
       u.lang = "en-US";
-      u.rate = 0.85;
+      if (voice) {
+        u.voice = voice;
+        u.lang = voice.lang;
+      }
+      u.rate = VOICE.rate;
+      u.pitch = VOICE.pitch;
+      u.volume = VOICE.volume;
+      u.onstart = () => duckMusic(true);
+      u.onend = () => duckMusic(false);
+      u.onerror = () => duckMusic(false);
       window.speechSynthesis.cancel();
       window.speechSynthesis.speak(u);
     } catch {
     }
+  }
+  function MusicToggle({ t }) {
+    const [on, setOn] = useState(musicEnabled());
+    useEffect(() => subscribeMusic(setOn), []);
+    if (!musicSupported) return null;
+    const label = t(on ? "musicOff" : "musicOn");
+    return /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round music-toggle", onClick: () => setMusic(!on), "aria-label": label, "aria-pressed": on, title: label }, /* @__PURE__ */ react_default.createElement(Icon, { name: on ? "music" : "musicoff" }));
   }
   function Listen({ text, label, big }) {
     if (!canSpeak) return null;
@@ -1053,9 +1279,9 @@
   function shade(hex, amt) {
     const n = parseInt(hex.slice(1), 16);
     const c = [n >> 16, n >> 8 & 255, n & 255];
-    const target = amt < 0 ? [59, 58, 74] : [255, 255, 255];
+    const target2 = amt < 0 ? [59, 58, 74] : [255, 255, 255];
     const k = Math.abs(amt);
-    return "#" + c.map((v2, i) => Math.round(v2 + (target[i] - v2) * k).toString(16).padStart(2, "0")).join("");
+    return "#" + c.map((v2, i) => Math.round(v2 + (target2[i] - v2) * k).toString(16).padStart(2, "0")).join("");
   }
 
   // src/art/BuildingArt.jsx
@@ -1320,17 +1546,17 @@
     const [site, setSite] = useState(null);
     const [popped, setPopped] = useState(null);
     const [panel, setPanel] = useState(null);
-    const [note, setNote] = useState(null);
+    const [note2, setNote] = useState(null);
     const [gate, setGate] = useState(false);
-    const timer = useRef(null);
-    useEffect(() => () => clearTimeout(timer.current), []);
+    const timer2 = useRef(null);
+    useEffect(() => () => clearTimeout(timer2.current), []);
     const bName = (id) => loc(BUILDINGS_BY_ID[id].name, lang);
     const place = (plotId, bId) => {
       setSite(plotId);
       setNote(t("constructing"));
       const rest = permits.filter((p) => p.id !== bId);
       const opensMore = openMissionCount(n + 1) > openMissionCount(n);
-      timer.current = setTimeout(() => {
+      timer2.current = setTimeout(() => {
         dispatch({ type: "PLACE", plot: plotId, building: bId });
         setSite(null);
         setPopped(plotId);
@@ -1394,7 +1620,7 @@
     const level = levelOf(n);
     const selected = mode?.type === "build" && mode.b ? BUILDINGS_BY_ID[mode.b] : null;
     const openCount = MISSIONS.filter((m) => missionStatus(state, m) === "open").length;
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen cityscreen" }, /* @__PURE__ */ react_default.createElement("header", { className: "hud" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "brand", onClick: () => go("welcome"), "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "brandmark", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null)), /* @__PURE__ */ react_default.createElement("span", { className: "brandname" }, "Little City Makers")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small player-chip", onClick: () => go("welcome"), "aria-label": `${t("switchPlayer")}: ${player?.nick || ""}` }, player && /* @__PURE__ */ react_default.createElement(Kid, { id: player.avatar, size: 30 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, player?.nick)), /* @__PURE__ */ react_default.createElement("div", { className: "levelbox" }, /* @__PURE__ */ react_default.createElement("b", null, t("lv" + level)), /* @__PURE__ */ react_default.createElement(Meter, { value: n, max: TOTAL_BUILDINGS, label: t("cityGrowth") }), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n, total: TOTAL_BUILDINGS }))), /* @__PURE__ */ react_default.createElement(LangSelect, { lang, onChange: (l) => dispatch({ type: "LANG", lang: l }), label: t("chooseLang") }), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: () => setGate(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "people", size: 18 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, t("grownups")))), /* @__PURE__ */ react_default.createElement("div", { className: "mapwrap" }, /* @__PURE__ */ react_default.createElement(
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen cityscreen" }, /* @__PURE__ */ react_default.createElement("header", { className: "hud" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "brand", onClick: () => go("welcome"), "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "brandmark", "aria-hidden": "true" }, /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null), /* @__PURE__ */ react_default.createElement("i", null)), /* @__PURE__ */ react_default.createElement("span", { className: "brandname" }, "Little City Makers")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small player-chip", onClick: () => go("welcome"), "aria-label": `${t("switchPlayer")}: ${player?.nick || ""}` }, player && /* @__PURE__ */ react_default.createElement(Kid, { id: player.avatar, size: 30 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, player?.nick)), /* @__PURE__ */ react_default.createElement("div", { className: "levelbox" }, /* @__PURE__ */ react_default.createElement("b", null, t("lv" + level)), /* @__PURE__ */ react_default.createElement(Meter, { value: n, max: TOTAL_BUILDINGS, label: t("cityGrowth") }), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n, total: TOTAL_BUILDINGS }))), /* @__PURE__ */ react_default.createElement(MusicToggle, { t }), /* @__PURE__ */ react_default.createElement(LangSelect, { lang, onChange: (l) => dispatch({ type: "LANG", lang: l }), label: t("chooseLang") }), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: () => setGate(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "people", size: 18 }), /* @__PURE__ */ react_default.createElement("span", { className: "hide-s" }, t("grownups")))), /* @__PURE__ */ react_default.createElement("div", { className: "mapwrap" }, /* @__PURE__ */ react_default.createElement(
       CityMap,
       {
         plots: state.plots,
@@ -1406,7 +1632,7 @@
         title: t("cityMap"),
         label: (p, b) => b ? loc(b.name, lang) : `${t("emptyPlot")}, ${t("c_" + p.district)}`
       }
-    ), /* @__PURE__ */ react_default.createElement("div", { className: "guide", role: "status" }, /* @__PURE__ */ react_default.createElement(Pip, { size: 58 }), /* @__PURE__ */ react_default.createElement("div", { className: "bubble" }, /* @__PURE__ */ react_default.createElement("p", null, note || guide), cta && !mode && /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn mint small", onClick: cta.fn }, /* @__PURE__ */ react_default.createElement(Icon, { name: cta.icon, size: 18 }), cta.label)))), mode?.type === "build" ? /* @__PURE__ */ react_default.createElement("section", { className: "tray-build", "aria-label": t("inventory") }, /* @__PURE__ */ react_default.createElement("div", { className: "trayhead" }, /* @__PURE__ */ react_default.createElement("h2", null, /* @__PURE__ */ react_default.createElement(Icon, { name: "hammer" }), t("inventory")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: stopMode, disabled: !!site }, t("done"))), /* @__PURE__ */ react_default.createElement("div", { className: "traybody" }, selected && /* @__PURE__ */ react_default.createElement("div", { className: "preview" }, /* @__PURE__ */ react_default.createElement(BuildingThumb, { id: selected.id, defaultColor: selected.color, size: 86, title: loc(selected.name, lang) }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("h3", { lang: "en" }, selected.name.en), sup(selected.name, lang) && /* @__PURE__ */ react_default.createElement("p", { className: "sup" }, sup(selected.name, lang)), /* @__PURE__ */ react_default.createElement("p", null, t("c_" + selected.cat), " \xB7 ", loc(selected.learn, lang)))), /* @__PURE__ */ react_default.createElement("div", { className: "inventory" }, BUILDINGS.map((b) => {
+    ), /* @__PURE__ */ react_default.createElement("div", { className: "guide", role: "status" }, /* @__PURE__ */ react_default.createElement(Pip, { size: 58 }), /* @__PURE__ */ react_default.createElement("div", { className: "bubble" }, /* @__PURE__ */ react_default.createElement("p", null, note2 || guide), cta && !mode && /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn mint small", onClick: cta.fn }, /* @__PURE__ */ react_default.createElement(Icon, { name: cta.icon, size: 18 }), cta.label)))), mode?.type === "build" ? /* @__PURE__ */ react_default.createElement("section", { className: "tray-build", "aria-label": t("inventory") }, /* @__PURE__ */ react_default.createElement("div", { className: "trayhead" }, /* @__PURE__ */ react_default.createElement("h2", null, /* @__PURE__ */ react_default.createElement(Icon, { name: "hammer" }), t("inventory")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn small", onClick: stopMode, disabled: !!site }, t("done"))), /* @__PURE__ */ react_default.createElement("div", { className: "traybody" }, selected && /* @__PURE__ */ react_default.createElement("div", { className: "preview" }, /* @__PURE__ */ react_default.createElement(BuildingThumb, { id: selected.id, defaultColor: selected.color, size: 86, title: loc(selected.name, lang) }), /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("h3", { lang: "en" }, selected.name.en), sup(selected.name, lang) && /* @__PURE__ */ react_default.createElement("p", { className: "sup" }, sup(selected.name, lang)), /* @__PURE__ */ react_default.createElement("p", null, t("c_" + selected.cat), " \xB7 ", loc(selected.learn, lang)))), /* @__PURE__ */ react_default.createElement("div", { className: "inventory" }, BUILDINGS.map((b) => {
       const st = placed[b.id] ? "onMap" : state.missions[b.mission] ? "ready" : "locked";
       const inner = /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement(BuildingThumb, { id: b.id, defaultColor: b.color, size: 58, locked: st === "locked", title: loc(b.name, lang) }), /* @__PURE__ */ react_default.createElement("b", null, loc(b.name, lang)), /* @__PURE__ */ react_default.createElement("small", null, st === "locked" && /* @__PURE__ */ react_default.createElement(Icon, { name: "lock", size: 12 }), st === "ready" ? t("ready") : st === "onMap" ? t("onMap") : t("lockedBy", { m: loc(MISSIONS_BY_ID[b.mission].title, lang) })));
       return st === "ready" ? /* @__PURE__ */ react_default.createElement("button", { type: "button", key: b.id, className: mode.b === b.id ? "inv ready sel" : "inv ready", disabled: !!site, "aria-pressed": mode.b === b.id, onClick: () => {
@@ -1588,9 +1814,9 @@
         dragged.current = false;
       }, 0);
       d.el.style.pointerEvents = "none";
-      const target = document.elementFromPoint(e.clientX, e.clientY)?.closest("[data-bin]");
+      const target2 = document.elementFromPoint(e.clientX, e.clientY)?.closest("[data-bin]");
       d.el.style.pointerEvents = "";
-      if (target) drop(d.it, target.dataset.bin);
+      if (target2) drop(d.it, target2.dataset.bin);
     };
     const tapItem = (it) => {
       if (!dragged.current) setSel((s4) => s4 === it.i ? null : it.i);
@@ -1693,7 +1919,7 @@
     };
     const Step = phase === "steps" ? STEPS[step.t] : null;
     const bName = loc(building.name, lang);
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen play" }, /* @__PURE__ */ react_default.createElement("header", { className: "playbar" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round", onClick: onExit, "aria-label": t("leave") }, /* @__PURE__ */ react_default.createElement(Icon, { name: "close" })), phase === "steps" ? /* @__PURE__ */ react_default.createElement("div", { className: "stepdots", role: "img", "aria-label": t("stepOf", { n: i + 1, total: steps.length }) }, steps.map((_, k) => /* @__PURE__ */ react_default.createElement("i", { key: k, className: k < i || k === i && solved ? "done" : k === i ? "cur" : "" }))) : /* @__PURE__ */ react_default.createElement("span", null), /* @__PURE__ */ react_default.createElement("span", { className: "pill" }, t(mode))), /* @__PURE__ */ react_default.createElement("main", { className: "playmain" }, phase === "intro" && /* @__PURE__ */ react_default.createElement("div", { className: "intro" }, /* @__PURE__ */ react_default.createElement("div", { className: "cast" }, mission.who.map((id) => /* @__PURE__ */ react_default.createElement(Kid, { key: id, id, size: 88 }))), /* @__PURE__ */ react_default.createElement("span", { className: `pill p-${mission.pillar}` }, t("p_" + mission.pillar), " \xB7 ", bName), /* @__PURE__ */ react_default.createElement("h2", { lang: "en" }, mission.title.en), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(mission.title, lang), lang }), /* @__PURE__ */ react_default.createElement("div", { className: "prompt" }, /* @__PURE__ */ react_default.createElement("p", { className: "scenario", lang: "en" }, mission.scenario.en), /* @__PURE__ */ react_default.createElement(Listen, { text: mission.scenario.en, label: t("listen") }), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(mission.scenario, lang), lang })), /* @__PURE__ */ react_default.createElement("section", null, /* @__PURE__ */ react_default.createElement("h3", null, t("newWords")), /* @__PURE__ */ react_default.createElement("div", { className: "vocab" }, mission.vocab.map((w) => {
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen play" }, /* @__PURE__ */ react_default.createElement("header", { className: "playbar" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round", onClick: onExit, "aria-label": t("leave") }, /* @__PURE__ */ react_default.createElement(Icon, { name: "close" })), phase === "steps" ? /* @__PURE__ */ react_default.createElement("div", { className: "stepdots", role: "img", "aria-label": t("stepOf", { n: i + 1, total: steps.length }) }, steps.map((_, k) => /* @__PURE__ */ react_default.createElement("i", { key: k, className: k < i || k === i && solved ? "done" : k === i ? "cur" : "" }))) : /* @__PURE__ */ react_default.createElement("span", null), /* @__PURE__ */ react_default.createElement("span", { className: "playbar-right" }, /* @__PURE__ */ react_default.createElement(MusicToggle, { t }), /* @__PURE__ */ react_default.createElement("span", { className: "pill" }, t(mode)))), /* @__PURE__ */ react_default.createElement("main", { className: "playmain" }, phase === "intro" && /* @__PURE__ */ react_default.createElement("div", { className: "intro" }, /* @__PURE__ */ react_default.createElement("div", { className: "cast" }, mission.who.map((id) => /* @__PURE__ */ react_default.createElement(Kid, { key: id, id, size: 88 }))), /* @__PURE__ */ react_default.createElement("span", { className: `pill p-${mission.pillar}` }, t("p_" + mission.pillar), " \xB7 ", bName), /* @__PURE__ */ react_default.createElement("h2", { lang: "en" }, mission.title.en), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(mission.title, lang), lang }), /* @__PURE__ */ react_default.createElement("div", { className: "prompt" }, /* @__PURE__ */ react_default.createElement("p", { className: "scenario", lang: "en" }, mission.scenario.en), /* @__PURE__ */ react_default.createElement(Listen, { text: mission.scenario.en, label: t("listen") }), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(mission.scenario, lang), lang })), /* @__PURE__ */ react_default.createElement("section", null, /* @__PURE__ */ react_default.createElement("h3", null, t("newWords")), /* @__PURE__ */ react_default.createElement("div", { className: "vocab" }, mission.vocab.map((w) => {
       const inner = /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("span", { className: "emo", "aria-hidden": "true" }, w.e), /* @__PURE__ */ react_default.createElement("b", { lang: "en" }, w.w), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(w, lang), lang }));
       return canSpeak ? /* @__PURE__ */ react_default.createElement("button", { type: "button", key: w.w, className: "word", onClick: () => speak(w.w), "aria-label": `${t("listen")}: ${w.w}` }, inner) : /* @__PURE__ */ react_default.createElement("div", { key: w.w, className: "word" }, inner);
     }))), /* @__PURE__ */ react_default.createElement("section", { className: "targetbox" }, /* @__PURE__ */ react_default.createElement("h3", null, t("weSay")), /* @__PURE__ */ react_default.createElement("p", { className: "fact", lang: "en" }, "\u201C", mission.target, "\u201D"), /* @__PURE__ */ react_default.createElement(Listen, { text: mission.target, label: t("listen"), big: true }), /* @__PURE__ */ react_default.createElement(Sup2, { text: sup(mission.targetHelp, lang), lang })), /* @__PURE__ */ react_default.createElement("p", { className: "goalline" }, /* @__PURE__ */ react_default.createElement("b", null, t("goal"), ":"), " ", loc(mission.objective, lang)), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn primary big", onClick: () => setPhase("steps") }, /* @__PURE__ */ react_default.createElement(Icon, { name: "play" }), t("startMission"))), phase === "steps" && /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("p", { className: "instr" }, t("i_" + step.t)), /* @__PURE__ */ react_default.createElement(Step, { key: i, step, mission, lang, t, little, solved, onSolved: solve })), phase === "reward" && /* @__PURE__ */ react_default.createElement(Reward, { ...{ mission, building, lang, t, practice, init, onExit, onBuild } })), phase === "steps" && solved && /* @__PURE__ */ react_default.createElement("footer", { className: "praisebar", role: "status" }, /* @__PURE__ */ react_default.createElement("div", null, /* @__PURE__ */ react_default.createElement("b", { lang: "en" }, praise.current), lang !== "en" && /* @__PURE__ */ react_default.createElement(Sup2, { text: t("praise"), lang })), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn mint big", onClick: next, autoFocus: true }, i + 1 < steps.length ? t("next") : t("finish"), /* @__PURE__ */ react_default.createElement(Icon, { name: "next", size: 20 }))));
@@ -1751,7 +1977,7 @@
     const [creating, setCreating] = useState(false);
     const [del, setDel] = useState(null);
     const showForm = creating || profiles.length === 0;
-    const target = del && profiles.find((p) => p.id === del.id);
+    const target2 = del && profiles.find((p) => p.id === del.id);
     const play = (id) => {
       dispatch({ type: "PROFILE_SELECT", id });
       go("city");
@@ -1761,7 +1987,7 @@
       setCreating(false);
       go("city");
     };
-    return /* @__PURE__ */ react_default.createElement("div", { className: "screen welcome" }, /* @__PURE__ */ react_default.createElement("div", { className: "welcome-art" }, /* @__PURE__ */ react_default.createElement(CityMap, { plots: DEMO_PLOTS, demo: true, title: "Little City Makers" })), /* @__PURE__ */ react_default.createElement("main", { className: "welcome-card" }, /* @__PURE__ */ react_default.createElement("h1", { className: "logo", "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "l1", "aria-hidden": "true" }, "Little"), /* @__PURE__ */ react_default.createElement("span", { className: "blocks", "aria-hidden": "true" }, "CITY".split("").map((ch, k) => /* @__PURE__ */ react_default.createElement("b", { key: k, className: `blk b${k}` }, ch))), /* @__PURE__ */ react_default.createElement("span", { className: "l3", "aria-hidden": "true" }, "Makers")), /* @__PURE__ */ react_default.createElement("p", { className: "tagline", lang: "en" }, "Learn. Build. Belong."), lang !== "en" && /* @__PURE__ */ react_default.createElement(Sup3, { text: t("tagline"), lang }), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseLang")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, LANGS.map((l) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: l.id, className: l.id === lang ? "segbtn on" : "segbtn", "aria-pressed": l.id === lang, onClick: () => dispatch({ type: "LANG", lang: l.id }), lang: l.id }, l.label)))), showForm ? /* @__PURE__ */ react_default.createElement(NewPlayer, { t, canCancel: profiles.length > 0, onCancel: () => setCreating(false), onCreate: create }) : /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("whoPlays")), /* @__PURE__ */ react_default.createElement("ul", { className: "players" }, profiles.map((p) => /* @__PURE__ */ react_default.createElement("li", { key: p.id, className: "player" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: p.id === activeId ? "playerbtn last" : "playerbtn", onClick: () => play(p.id) }, /* @__PURE__ */ react_default.createElement(Kid, { id: p.avatar, size: 52 }), /* @__PURE__ */ react_default.createElement("span", null, /* @__PURE__ */ react_default.createElement("b", null, p.nick), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n: placedCount(p.game), total: TOTAL_BUILDINGS }), " \xB7 ", t(p.game.mode), p.id === activeId ? ` \xB7 ${t("lastPlayed")}` : ""))), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round", onClick: () => setDel({ id: p.id, ok: false }), "aria-label": t("removePlayer", { name: p.nick }) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "trash", size: 20 })))))), profiles.length < MAX_PLAYERS ? /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn big wide", onClick: () => setCreating(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "plus" }), t("newPlayer")) : /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("playersFull")), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("keepNote"))), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("privacy")), target && !del.ok && /* @__PURE__ */ react_default.createElement(ParentGate, { t, onClose: () => setDel(null), onPass: () => setDel({ id: del.id, ok: true }) }), target && del.ok && /* @__PURE__ */ react_default.createElement(Modal, { title: t("removePlayer", { name: target.nick }), onClose: () => setDel(null), closeLabel: t("close") }, /* @__PURE__ */ react_default.createElement("p", null, t("removeAsk", { name: target.nick })), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
+    return /* @__PURE__ */ react_default.createElement("div", { className: "screen welcome" }, /* @__PURE__ */ react_default.createElement("div", { className: "welcome-music" }, /* @__PURE__ */ react_default.createElement(MusicToggle, { t })), /* @__PURE__ */ react_default.createElement("div", { className: "welcome-art" }, /* @__PURE__ */ react_default.createElement(CityMap, { plots: DEMO_PLOTS, demo: true, title: "Little City Makers" })), /* @__PURE__ */ react_default.createElement("main", { className: "welcome-card" }, /* @__PURE__ */ react_default.createElement("h1", { className: "logo", "aria-label": "Little City Makers" }, /* @__PURE__ */ react_default.createElement("span", { className: "l1", "aria-hidden": "true" }, "Little"), /* @__PURE__ */ react_default.createElement("span", { className: "blocks", "aria-hidden": "true" }, "CITY".split("").map((ch, k) => /* @__PURE__ */ react_default.createElement("b", { key: k, className: `blk b${k}` }, ch))), /* @__PURE__ */ react_default.createElement("span", { className: "l3", "aria-hidden": "true" }, "Makers")), /* @__PURE__ */ react_default.createElement("p", { className: "tagline", lang: "en" }, "Learn. Build. Belong."), lang !== "en" && /* @__PURE__ */ react_default.createElement(Sup3, { text: t("tagline"), lang }), /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("chooseLang")), /* @__PURE__ */ react_default.createElement("div", { className: "seg" }, LANGS.map((l) => /* @__PURE__ */ react_default.createElement("button", { type: "button", key: l.id, className: l.id === lang ? "segbtn on" : "segbtn", "aria-pressed": l.id === lang, onClick: () => dispatch({ type: "LANG", lang: l.id }), lang: l.id }, l.label)))), showForm ? /* @__PURE__ */ react_default.createElement(NewPlayer, { t, canCancel: profiles.length > 0, onCancel: () => setCreating(false), onCreate: create }) : /* @__PURE__ */ react_default.createElement(react_default.Fragment, null, /* @__PURE__ */ react_default.createElement("fieldset", { className: "pick" }, /* @__PURE__ */ react_default.createElement("legend", null, t("whoPlays")), /* @__PURE__ */ react_default.createElement("ul", { className: "players" }, profiles.map((p) => /* @__PURE__ */ react_default.createElement("li", { key: p.id, className: "player" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: p.id === activeId ? "playerbtn last" : "playerbtn", onClick: () => play(p.id) }, /* @__PURE__ */ react_default.createElement(Kid, { id: p.avatar, size: 52 }), /* @__PURE__ */ react_default.createElement("span", null, /* @__PURE__ */ react_default.createElement("b", null, p.nick), /* @__PURE__ */ react_default.createElement("small", null, t("buildingsCount", { n: placedCount(p.game), total: TOTAL_BUILDINGS }), " \xB7 ", t(p.game.mode), p.id === activeId ? ` \xB7 ${t("lastPlayed")}` : ""))), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "round", onClick: () => setDel({ id: p.id, ok: false }), "aria-label": t("removePlayer", { name: p.nick }) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "trash", size: 20 })))))), profiles.length < MAX_PLAYERS ? /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn big wide", onClick: () => setCreating(true) }, /* @__PURE__ */ react_default.createElement(Icon, { name: "plus" }), t("newPlayer")) : /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("playersFull")), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("keepNote"))), /* @__PURE__ */ react_default.createElement("p", { className: "fine" }, t("privacy")), target2 && !del.ok && /* @__PURE__ */ react_default.createElement(ParentGate, { t, onClose: () => setDel(null), onPass: () => setDel({ id: del.id, ok: true }) }), target2 && del.ok && /* @__PURE__ */ react_default.createElement(Modal, { title: t("removePlayer", { name: target2.nick }), onClose: () => setDel(null), closeLabel: t("close") }, /* @__PURE__ */ react_default.createElement("p", null, t("removeAsk", { name: target2.nick })), /* @__PURE__ */ react_default.createElement("div", { className: "row" }, /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn danger", onClick: () => {
       dispatch({ type: "PROFILE_DELETE", id: del.id });
       setDel(null);
     } }, t("removeYes")), /* @__PURE__ */ react_default.createElement("button", { type: "button", className: "btn", onClick: () => setDel(null) }, t("cancel"))))));
@@ -1822,6 +2048,15 @@
     useEffect(() => {
       setSaved(save(root2));
     }, [root2]);
+    useEffect(() => {
+      const start2 = () => unlockMusic();
+      window.addEventListener("pointerdown", start2, { once: true });
+      window.addEventListener("keydown", start2, { once: true });
+      return () => {
+        window.removeEventListener("pointerdown", start2);
+        window.removeEventListener("keydown", start2);
+      };
+    }, []);
     useEffect(() => {
       document.documentElement.lang = root2.lang;
     }, [root2.lang]);

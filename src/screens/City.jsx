@@ -1,6 +1,6 @@
 // Screen 2 (City Map), Screen 5 (Construction Mode) and Screen 6's entry point (building panel).
 import React, { useEffect, useRef, useState } from 'react';
-import { Icon, LangSelect, Meter, Modal, ParentGate } from '../components/ui.jsx';
+import { Icon, LangSelect, Meter, MusicToggle, Modal, ParentGate } from '../components/ui.jsx';
 import { CityMap } from '../art/CityMap.jsx';
 import { BuildingThumb, COLORS } from '../art/BuildingArt.jsx';
 import { Kid, Pip } from '../art/Characters.jsx';
@@ -103,6 +103,7 @@ export function City({ state, dispatch, t, lang, go, player, initialBuild, onPra
           <Meter value={n} max={TOTAL_BUILDINGS} label={t('cityGrowth')} />
           <small>{t('buildingsCount', { n, total: TOTAL_BUILDINGS })}</small>
         </div>
+        <MusicToggle t={t} />
         <LangSelect lang={lang} onChange={(l) => dispatch({ type: 'LANG', lang: l })} label={t('chooseLang')} />
         <button type="button" className="btn small" onClick={() => setGate(true)}><Icon name="people" size={18} /><span className="hide-s">{t('grownups')}</span></button>
       </header>

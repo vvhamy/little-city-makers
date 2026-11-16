@@ -37,6 +37,8 @@ Open `dist/index.html` in a browser. React 18 is loaded from a CDN in this proto
 
 - Speaking steps are prompts only. Nothing is recorded or checked.
 - Audio uses the browser's built-in speech voice; Listen buttons hide when no voice exists.
+  The game picks the softest English voice available and speaks slowly. Quiet background music is
+  generated in the browser (no audio files); it starts at the first tap and can be turned off.
   Production should use recorded audio by teachers or voice actors.
 - Players are local profiles (nickname + picture) on one device, saved in `localStorage`. There are no accounts, no passwords and no server, so progress does not sync between devices and there is no shared ranking.
 - Content was written for this prototype and still needs review by teachers and by

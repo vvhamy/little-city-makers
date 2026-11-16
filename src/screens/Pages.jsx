@@ -1,6 +1,6 @@
 // Screen 1 (Welcome), Screen 3 (Mission Center), Screen 7 (Achievements), Screen 8 (Parent Dashboard).
 import React, { useState } from 'react';
-import { Icon, Meter, Modal, ParentGate, TopBar } from '../components/ui.jsx';
+import { Icon, Meter, Modal, MusicToggle, ParentGate, TopBar } from '../components/ui.jsx';
 import { CityMap } from '../art/CityMap.jsx';
 import { BuildingThumb } from '../art/BuildingArt.jsx';
 import { KIDS, Kid, Pip } from '../art/Characters.jsx';
@@ -67,6 +67,7 @@ export function Welcome({ profiles, activeId, dispatch, t, lang, go }) {
   const create = (v) => { dispatch({ type: 'PROFILE_ADD', id: newId(), now: Date.now(), ...v }); setCreating(false); go('city'); };
   return (
     <div className="screen welcome">
+      <div className="welcome-music"><MusicToggle t={t} /></div>
       <div className="welcome-art"><CityMap plots={DEMO_PLOTS} demo title="Little City Makers" /></div>
       <main className="welcome-card">
         <h1 className="logo" aria-label="Little City Makers">

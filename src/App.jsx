@@ -4,6 +4,7 @@ import { makeT } from './data/i18n.js';
 import { BUILDINGS_BY_ID } from './data/buildings.js';
 import { MISSIONS_BY_ID } from './data/missions.js';
 import { fresh, load, placedMap, rootReducer, save } from './state/store.js';
+import { unlockMusic } from './audio/music.js';
 import { City } from './screens/City.jsx';
 import { MissionPlayer } from './screens/MissionPlayer.jsx';
 import { Achievements, Missions, Parent, Welcome } from './screens/Pages.jsx';
@@ -29,6 +30,13 @@ export default function App({ boot }) {
   live.current = { root, screen };
 
   useEffect(() => { setSaved(save(root)); }, [root]);
+  // Browsers only allow sound after a tap, so the music starts at the child's first touch or key press.
+  useEffect(() => {
+    const start = () => unlockMusic();
+    window.addEventListener('pointerdown', start, { once: true });
+    window.addEventListener('keydown', start, { once: true });
+    return () => { window.removeEventListener('pointerdown', start); window.removeEventListener('keydown', start); };
+  }, []);
   useEffect(() => { document.documentElement.lang = root.lang; }, [root.lang]);
   // Keep a child's place if the page is republished while they are playing.
   useEffect(() => { window.claude?.hot?.snapshot?.(() => live.current); }, []);
