@@ -4,8 +4,9 @@
 // (browsers do not allow sound before that). The on/off choice is remembered on this device only.
 import { readPrefs, writePrefs } from './prefs.js';
 
-const LEVEL = 0.07;    // master loudness (0–1). Kept low so it never competes with the voice.
-const DUCKED = 0.35;   // fraction of the level while the voice speaks
+const LEVEL = 0.3;     // master loudness (0–1): soft but clearly audible at normal device volume (about -26 dBFS RMS)
+const DUCKED = 0.3;    // fraction of the level while the voice speaks, so words stay clear
+const DUCK_MAX_MS = 9000; // safety: some browsers never fire the end-of-speech event
 const BPM = 76;
 const BEAT = 60 / BPM;
 
@@ -32,6 +33,7 @@ let nextBarTime = 0;
 let bar = 0;
 let lastMel = 2;
 let ducked = false;
+let duckTimer = null;
 const listeners = new Set();
 
 const emit = () => listeners.forEach((f) => f(enabled));
@@ -114,6 +116,8 @@ function tick() {
 function ensure() {
   if (ctx || !AC) return !!ctx;
   try {
+    // iPhone/iPad: play through the speaker even when the silent switch is on (Safari 16.4+).
+    try { if (navigator.audioSession) navigator.audioSession.type = 'playback'; } catch { /* optional */ }
     ctx = new AC();
     const filter = ctx.createBiquadFilter();
     filter.type = 'lowpass';
@@ -166,7 +170,9 @@ export function setMusic(on) {
 // The voice is speaking: lower the music so the words are clear.
 export function duckMusic(on) {
   ducked = !!on;
-  ramp(0.25);
+  clearTimeout(duckTimer);
+  if (ducked) duckTimer = setTimeout(() => { ducked = false; ramp(0.6); }, DUCK_MAX_MS);
+  ramp(ducked ? 0.25 : 0.8);
 }
 
 // Exposed for tests and for stopping cleanly.
