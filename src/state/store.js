@@ -1,39 +1,66 @@
-// Game state: one plain JSON object, a reducer, local persistence and derived selectors.
+// Game state, in two layers.
+//   root: { v: 2, lang, active, profiles: [{ id, nick, avatar, created, game }] }   saved in localStorage
+//   game: one player's progress (plain JSON): { mode, missions, plots, practice, skills }
+// Players are local profiles on one device. There are no accounts, no passwords and no server.
 import { BUILDINGS, TOTAL_BUILDINGS } from '../data/buildings.js';
 import { MISSIONS } from '../data/missions.js';
 
-const KEY = 'little-city-makers.v1';
+const KEY = 'little-city-makers.v2';
+const OLD_KEY = 'little-city-makers.v1'; // single-player saves from the first prototype are migrated
 
-export const fresh = () => ({
-  v: 1,
-  started: false,
-  lang: 'en',
-  mode: 'little',   // 'little' (4–6) | 'junior' (7–10)
+export const MAX_PLAYERS = 8;
+export const NICK_MAX = 14;
+
+export const fresh = (mode = 'little') => ({
+  mode,             // 'little' (4–6) | 'junior' (7–10)
   missions: {},     // missionId -> { plays }
   plots: {},        // plotId -> { b: buildingId, c?: colorIndex, d?: decoId }
   practice: {},     // buildingId -> times practised inside the building
   skills: {},       // skillKey -> activities completed
 });
+export const freshRoot = () => ({ v: 2, lang: 'en', active: null, profiles: [] });
 
-// Returns { state, ok }. ok=false means this browser refuses storage; the UI says so honestly.
+export const newId = () => 'p' + Math.random().toString(36).slice(2, 8) + Date.now().toString(36).slice(-4);
+// eslint-disable-next-line no-control-regex
+export const cleanNick = (s) => String(s || '').replace(/[\u0000-\u001f]/g, '').replace(/\s+/g, ' ').trim().slice(0, NICK_MAX);
+
+// Returns { root, ok }. ok=false means this browser refuses storage; the UI says so honestly.
 export function load() {
   try {
     const raw = localStorage.getItem(KEY);
     if (raw) {
-      const s = JSON.parse(raw);
-      if (s && s.v === 1) return { state: { ...fresh(), ...s }, ok: true };
+      const r = JSON.parse(raw);
+      if (r && r.v === 2 && Array.isArray(r.profiles)) {
+        const profiles = r.profiles.map((p) => ({ ...p, game: { ...fresh(), ...p.game } }));
+        const active = profiles.some((p) => p.id === r.active) ? r.active : null;
+        return { root: { ...freshRoot(), ...r, profiles, active }, ok: true };
+      }
+    }
+    const root = freshRoot();
+    const old = localStorage.getItem(OLD_KEY);
+    if (old) {
+      const s = JSON.parse(old);
+      if (s && s.v === 1 && (s.started || Object.keys(s.missions || {}).length)) {
+        const id = newId();
+        root.lang = s.lang || 'en';
+        root.active = id;
+        root.profiles = [{
+          id, nick: 'Player 1', avatar: 'mai', created: Date.now(),
+          game: { ...fresh(s.mode), missions: s.missions || {}, plots: s.plots || {}, practice: s.practice || {}, skills: s.skills || {} },
+        }];
+      }
     }
     localStorage.setItem(KEY + '.probe', '1');
     localStorage.removeItem(KEY + '.probe');
-    return { state: fresh(), ok: true };
+    return { root, ok: true };
   } catch {
-    return { state: fresh(), ok: false };
+    return { root: freshRoot(), ok: false };
   }
 }
 
-export function save(state) {
+export function save(root) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(state));
+    localStorage.setItem(KEY, JSON.stringify(root));
     return true;
   } catch {
     return false;
@@ -46,12 +73,9 @@ const addSkills = (a, b = {}) => {
   return out;
 };
 
-export function reducer(s, a) {
+// One player's game.
+export function gameReducer(s, a) {
   switch (a.type) {
-    case 'START':
-      return { ...s, started: true, lang: a.lang, mode: a.mode };
-    case 'LANG':
-      return { ...s, lang: a.lang };
     case 'MODE':
       return { ...s, mode: a.mode };
     case 'MISSION_DONE':
@@ -71,14 +95,35 @@ export function reducer(s, a) {
     case 'DECORATE':
       if (!s.plots[a.plot]) return s;
       return { ...s, plots: { ...s.plots, [a.plot]: { ...s.plots[a.plot], ...a.patch } } };
-    case 'RESET':
-      return { ...fresh(), lang: s.lang };
+    case 'RESET': // erase this player's progress, keep the player
+      return fresh(s.mode);
     default:
       return s;
   }
 }
 
-// ---- selectors ----
+// Whole device: language, the list of players, who is active. Game actions go to the active player.
+export function rootReducer(r, a) {
+  switch (a.type) {
+    case 'LANG':
+      return { ...r, lang: a.lang };
+    case 'PROFILE_ADD': {
+      if (r.profiles.length >= MAX_PLAYERS) return r;
+      const nick = cleanNick(a.nick) || `Maker ${r.profiles.length + 1}`;
+      const p = { id: a.id, nick, avatar: a.avatar, created: a.now, game: fresh(a.mode) };
+      return { ...r, active: p.id, profiles: [...r.profiles, p] };
+    }
+    case 'PROFILE_SELECT':
+      return r.profiles.some((p) => p.id === a.id) ? { ...r, active: a.id } : r;
+    case 'PROFILE_DELETE':
+      return { ...r, profiles: r.profiles.filter((p) => p.id !== a.id), active: r.active === a.id ? null : r.active };
+    default:
+      if (!r.active) return r;
+      return { ...r, profiles: r.profiles.map((p) => (p.id === r.active ? { ...p, game: gameReducer(p.game, a) } : p)) };
+  }
+}
+
+// ---- selectors (take one player's game) ----
 export const placedMap = (s) => Object.fromEntries(Object.entries(s.plots).map(([plot, v]) => [v.b, plot]));
 export const placedCount = (s) => Object.keys(s.plots).length;
 export const permitsOf = (s) => {

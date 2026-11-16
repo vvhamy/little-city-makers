@@ -1,5 +1,5 @@
 // Shared interface pieces: icons, audio, modal, top bar, progress bar.
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { LANGS } from '../data/i18n.js';
 
 const PATHS = {
@@ -19,6 +19,8 @@ const PATHS = {
   play: 'M8 5l11 7-11 7z',
   mic: 'M12 4a3 3 0 00-3 3v5a3 3 0 006 0V7a3 3 0 00-3-3zM6 11a6 6 0 0012 0M12 17v3',
   next: 'M9 5l7 7-7 7',
+  plus: 'M12 5v14M5 12h14',
+  trash: 'M5 7h14M10 7V4h4v3M7 7l1 13h8l1-13M10 11v6M14 11v6',
 };
 
 export function Icon({ name, size = 22 }) {
@@ -115,3 +117,26 @@ export const shuffle = (list) => {
   }
   return a;
 };
+
+// A light gate so small children do not wander into grown-up actions. It is not a security feature.
+export function ParentGate({ t, onClose, onPass }) {
+  const [q] = useState(() => ({ a: 3 + Math.floor(Math.random() * 6), b: 3 + Math.floor(Math.random() * 6) }));
+  const [val, setVal] = useState('');
+  const [wrong, setWrong] = useState(false);
+  const submit = (e) => {
+    e.preventDefault();
+    if (Number(val) === q.a * q.b) onPass(); else setWrong(true);
+  };
+  return (
+    <Modal title={t('grownups')} onClose={onClose} closeLabel={t('close')}>
+      <form className="gate" onSubmit={submit}>
+        <label htmlFor="gate-answer">{t('gateQ', q)}</label>
+        <div className="row">
+          <input id="gate-answer" type="text" inputMode="numeric" autoComplete="off" autoFocus value={val} onChange={(e) => { setVal(e.target.value); setWrong(false); }} />
+          <button type="submit" className="btn primary">{t('open')}</button>
+        </div>
+        {wrong && <p className="gentle" role="alert">{t('gateWrong')}</p>}
+      </form>
+    </Modal>
+  );
+}

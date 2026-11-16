@@ -108,6 +108,20 @@ button:disabled { cursor: default; }
 .agecard.junior .agetag { background: var(--lav); }
 .agecard.on { border-color: var(--ink); box-shadow: 0 4px 0 var(--ink); }
 
+/* ---------- players ---------- */
+.newplayer { display: flex; flex-direction: column; gap: 14px; }
+.avatars { display: flex; flex-wrap: wrap; gap: 8px; }
+.avatar { width: 66px; height: 66px; padding: 0; display: grid; place-items: center; border-radius: 50%; border: 3px solid var(--line); background: var(--sky-soft); }
+.avatar.on { border-color: var(--ink); box-shadow: 0 0 0 3px var(--white), 0 0 0 6px var(--ink); }
+.players { display: flex; flex-direction: column; gap: 8px; }
+.player { display: grid; grid-template-columns: 1fr auto; gap: 8px; align-items: center; }
+.playerbtn { display: flex; align-items: center; gap: 12px; min-height: 68px; padding: 6px 12px; border-radius: var(--r); border: 3px solid var(--line); background: var(--white); text-align: left; min-width: 0; }
+.playerbtn.last { border-color: var(--butter-deep); background: #fff6d6; }
+.playerbtn span { display: flex; flex-direction: column; min-width: 0; line-height: 1.2; }
+.playerbtn b { font: 800 1.15rem var(--display); overflow-wrap: anywhere; }
+.playerbtn small { color: var(--ink-soft); font-size: .78rem; font-weight: 700; }
+.player-chip { gap: 6px; padding-inline: .5em .8em; }
+
 /* ---------- city ---------- */
 .cityscreen { background: var(--sky-soft); overflow: hidden; position: relative; }
 .cityscreen::before, .cityscreen::after { content: ""; position: absolute; background: var(--white); border-radius: 40px; opacity: .8; pointer-events: none; }
@@ -182,8 +196,11 @@ button:disabled { cursor: default; }
 .chip.sel { background: var(--ink); color: var(--white); border-color: var(--ink); }
 .chip:disabled { background: #f6f1e6; }
 .gate { display: flex; flex-direction: column; gap: 12px; }
-.gate input, .cloze input { min-height: 52px; border-radius: 16px; border: 3px solid var(--line); background: var(--white); padding: 0 .6em; font-weight: 800; }
+.gate input, .cloze input, .field input { min-height: 52px; border-radius: 16px; border: 3px solid var(--line); background: var(--white); padding: 0 .6em; font-weight: 800; }
 .gate input { width: 110px; font-size: 1.2rem; }
+.field { display: flex; flex-direction: column; gap: 6px; }
+.field label { font: 800 .95rem var(--display); color: var(--ink-soft); }
+.field input { width: 100%; font-size: 1.2rem; }
 
 /* ---------- mission centre ---------- */
 .progressline { display: flex; align-items: center; gap: 12px; font-size: .92rem; color: var(--ink-soft); }
@@ -331,7 +348,8 @@ button.tile { min-height: 52px; min-width: 52px; padding: 0 .8em; border-radius:
 }
 @media (max-width: 560px) {
   body { font-size: 16px; }
-  .hide-s, .brandname { display: none; }
+  .hide-s, .brand { display: none; }
+  .player-chip { padding-inline: .4em; }
   .hud { gap: 8px; padding: 8px 10px; flex-wrap: nowrap; }
   .levelbox { min-width: 0; grid-template-columns: 1fr; }
   .levelbox b { font-size: .88rem; line-height: 1.1; }

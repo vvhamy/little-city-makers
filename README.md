@@ -38,7 +38,7 @@ Open `dist/index.html` in a browser. React 18 is loaded from a CDN in this proto
 - Speaking steps are prompts only. Nothing is recorded or checked.
 - Audio uses the browser's built-in speech voice; Listen buttons hide when no voice exists.
   Production should use recorded audio by teachers or voice actors.
-- Progress is stored in `localStorage` on one device. There are no accounts and no server.
+- Players are local profiles (nickname + picture) on one device, saved in `localStorage`. There are no accounts, no passwords and no server, so progress does not sync between devices and there is no shared ranking.
 - Content was written for this prototype and still needs review by teachers and by
   Vietnamese and Korean cultural reviewers before use with children.
 - The parent gate (a multiplication question) keeps small children out; it is not security.
